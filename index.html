@@ -1,1202 +1,450 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ButtonBoxEN57 Configurator</title>
-
-<style>
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Arial,Helvetica,sans-serif;
-background:#0b0d10;
-color:#fff;
-min-height:100vh
-}
-
-.container{
-width:min(760px,calc(100% - 30px));
-margin:0 auto;
-padding:35px 0 50px
-}
-
-.header{
-text-align:center;
-margin-bottom:28px
-}
-
-.logo{
-font-size:38px;
-font-weight:800;
-letter-spacing:3px
-}
-
-.subtitle{
-color:#8d939c;
-margin-top:7px;
-font-size:15px
-}
-
-.status{
-display:flex;
-align-items:center;
-gap:10px;
-background:#15181d;
-border:1px solid #292e36;
-border-radius:14px;
-padding:14px 17px;
-margin-bottom:14px;
-color:#c8ccd2
-}
-
-.status-dot{
-width:10px;
-height:10px;
-border-radius:50%;
-background:#777;
-flex-shrink:0
-}
-
-.connect{
-width:100%;
-padding:15px;
-border:0;
-border-radius:13px;
-background:#fff;
-color:#111;
-font-size:16px;
-font-weight:700;
-cursor:pointer;
-transition:.2s
-}
-
-.connect:hover{
-background:#ddd;
-transform:translateY(-1px)
-}
-
-.connect.disconnect{
-background:#242931;
-color:#fff;
-border:1px solid #363c45
-}
-
-.connect.disconnect:hover{
-background:#303640
-}
-
-.section-title{
-font-size:13px;
-text-transform:uppercase;
-letter-spacing:1.5px;
-color:#777e88;
-margin:30px 4px 12px
-}
-
-.card{
-background:#15181d;
-border:1px solid #292e36;
-border-radius:17px;
-padding:17px;
-margin:10px 0
-}
-
-.card.disabled{
-opacity:.45
-}
-
-.card-top{
-display:flex;
-align-items:center;
-gap:13px;
-margin-bottom:13px
-}
-
-.icon{
-width:42px;
-height:42px;
-border-radius:12px;
-background:#20242b;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:21px
-}
-
-.name{
-font-size:16px;
-font-weight:700
-}
-
-.desc{
-font-size:12px;
-color:#777e88;
-margin-top:3px
-}
-
-.row{
-display:flex;
-gap:9px
-}
-
-input{
-flex:1;
-min-width:0;
-background:#0d0f12;
-border:1px solid #303640;
-color:#fff;
-border-radius:10px;
-padding:12px 13px;
-font-size:15px;
-outline:none
-}
-
-input:focus{
-border-color:#777
-}
-
-.capture{
-background:#242931;
-color:#fff;
-border:1px solid #363c45;
-border-radius:10px;
-padding:0 14px;
-font-size:13px;
-font-weight:600;
-cursor:pointer;
-white-space:nowrap
-}
-
-.capture:hover{
-background:#303640
-}
-
-.capture:disabled{
-cursor:not-allowed;
-opacity:.5
-}
-
-.save{
-width:100%;
-margin-top:18px;
-padding:15px;
-border:0;
-border-radius:13px;
-background:#fff;
-color:#111;
-font-size:16px;
-font-weight:700;
-cursor:pointer
-}
-
-.save:hover{
-background:#ddd
-}
-
-.save:disabled{
-background:#30343a;
-color:#777e88;
-cursor:not-allowed
-}
-
-.warning{
-display:none;
-background:#211b0f;
-border:1px solid #5b481e;
-color:#d8bd72;
-border-radius:12px;
-padding:13px 15px;
-margin-top:14px;
-font-size:13px;
-line-height:1.4
-}
-
-.warning.show{
-display:block
-}
-
-.info{
-margin-top:18px;
-text-align:center;
-color:#626975;
-font-size:12px
-}
-
-@media(max-width:600px){
-
-.container{
-width:calc(100% - 20px);
-padding-top:25px
-}
-
-.logo{
-font-size:31px
-}
-
-.row{
-flex-direction:column
-}
-
-.capture{
-padding:12px
-}
-
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="header">
-<div class="logo">ButtonBoxEN57</div>
-<div class="subtitle">Button Box Configurator</div>
-</div>
-
-
-<div class="status">
-<span class="status-dot" id="statusDot"></span>
-<span id="status">Niepołączono z Button Box</span>
-</div>
-
-
-<button class="connect" id="connectButton">
-🔌 Połącz z Button Box
-</button>
-
-
-<div class="warning" id="warning">
-Aby zmieniać ustawienia, uruchom Button Box w trybie konfiguracji:
-<strong>CZUWAK + ŚRODKOWY podczas podłączania USB.</strong>
-</div>
-
-
-<div class="section-title">
-Konfiguracja przycisków
-</div>
-
-
-<div id="settings">
-
-
-<div class="card disabled">
-<div class="card-top">
-<div class="icon">◀️</div>
-<div>
-<div class="name">Lewy — do góry</div>
-<div class="desc">Funkcja przy ruchu do góry</div>
-</div>
-</div>
-
-<div class="row">
-<input id="leftUp" disabled>
-<button class="capture" data-field="leftUp" disabled>
-⌨️ Naciśnij klawisz
-</button>
-</div>
-</div>
-
-
-<div class="card disabled">
-<div class="card-top">
-<div class="icon">🔽</div>
-<div>
-<div class="name">Lewy — w dół</div>
-<div class="desc">Funkcja przy ruchu w dół</div>
-</div>
-</div>
-
-<div class="row">
-<input id="leftDown" disabled>
-<button class="capture" data-field="leftDown" disabled>
-⌨️ Naciśnij klawisz
-</button>
-</div>
-</div>
-
-
-<div class="card disabled">
-<div class="card-top">
-<div class="icon">▶️</div>
-<div>
-<div class="name">Prawy — do góry</div>
-<div class="desc">Funkcja przy ruchu do góry</div>
-</div>
-</div>
-
-<div class="row">
-<input id="rightUp" disabled>
-<button class="capture" data-field="rightUp" disabled>
-⌨️ Naciśnij klawisz
-</button>
-</div>
-</div>
-
-
-<div class="card disabled">
-<div class="card-top">
-<div class="icon">🔽</div>
-<div>
-<div class="name">Prawy — w dół</div>
-<div class="desc">Funkcja przy ruchu w dół</div>
-</div>
-</div>
-
-<div class="row">
-<input id="rightDown" disabled>
-<button class="capture" data-field="rightDown" disabled>
-⌨️ Naciśnij klawisz
-</button>
-</div>
-</div>
-
-
-<div class="card disabled">
-<div class="card-top">
-<div class="icon">⏺️</div>
-<div>
-<div class="name">Środkowy</div>
-<div class="desc">Przycisk środkowy</div>
-</div>
-</div>
-
-<div class="row">
-<input id="mid" disabled>
-<button class="capture" data-field="mid" disabled>
-⌨️ Naciśnij klawisz
-</button>
-</div>
-</div>
-
-
-<div class="card disabled">
-<div class="card-top">
-<div class="icon">⚠️</div>
-<div>
-<div class="name">Czuwak</div>
-<div class="desc">Przycisk czuwaka</div>
-</div>
-</div>
-
-<div class="row">
-<input id="czuwak" disabled>
-<button class="capture" data-field="czuwak" disabled>
-⌨️ Naciśnij klawisz
-</button>
-</div>
-</div>
-
-
-<button class="save" id="saveButton" disabled>
-💾 Zapisz ustawienia
-</button>
-
-</div>
-
-
-<div class="info">
-ButtonBoxEN57 • Button Box Configuration
-</div>
-
-</div>
-
-
-<script>
-
-let port = null;
-let reader = null;
-let buffer = "";
-let capturing = null;
-
-let configMode = false;
-let receivedSettings = false;
-let disconnectHandled = false;
-
-
-/* =====================================================
-   ELEMENTY
-===================================================== */
-
-const statusElement =
-document.getElementById("status");
-
-const statusDot =
-document.getElementById("statusDot");
-
-const connectButton =
-document.getElementById("connectButton");
-
-const saveButton =
-document.getElementById("saveButton");
-
-const warning =
-document.getElementById("warning");
-
-
-/* =====================================================
-   WEB SERIAL
-===================================================== */
-
-function checkWebSerial(){
-
-if(!("serial" in navigator)){
-
-statusElement.textContent =
-"Web Serial niedostępny";
-
-statusDot.style.background =
-"#d9534f";
-
-return false;
-
-}
-
-return true;
-
-}
-
-
-/* =====================================================
-   WŁĄCZANIE KONFIGURACJI
-===================================================== */
-
-function setConfigurationEnabled(enabled){
-
-configMode = enabled;
-
-document
-.querySelectorAll("input")
-.forEach(input=>{
-input.disabled = !enabled;
-});
-
-document
-.querySelectorAll(".capture")
-.forEach(button=>{
-button.disabled = !enabled;
-});
-
-saveButton.disabled = !enabled;
-
-
-document
-.querySelectorAll(".card")
-.forEach(card=>{
-
-if(enabled){
-
-card.classList.remove("disabled");
-
-}else{
-
-card.classList.add("disabled");
-
-}
-
-});
-
-
-if(!enabled){
-
-capturing = null;
-
-}
-
-}
-
-
-/* =====================================================
-   CZYSZCZENIE
-===================================================== */
-
-function clearSettings(){
-
-document.getElementById("leftUp").value = "";
-document.getElementById("leftDown").value = "";
-document.getElementById("rightUp").value = "";
-document.getElementById("rightDown").value = "";
-document.getElementById("mid").value = "";
-document.getElementById("czuwak").value = "";
-
-}
-
-
-/* =====================================================
-   POŁĄCZENIE
-===================================================== */
-
-async function connectButtonBox(){
-
-console.log("Kliknięto Połącz");
-
-
-if(!checkWebSerial()){
-
-alert(
-"Web Serial jest niedostępny.\n\n" +
-"Użyj Google Chrome lub Microsoft Edge."
-);
-
-return;
-
-}
-
-
-/* JEŚLI JUŻ POŁĄCZONY */
-
-if(port){
-
-await disconnectButtonBox();
-
-return;
-
-}
-
-
-try{
-
-disconnectHandled = false;
-receivedSettings = false;
-configMode = false;
-
-clearSettings();
-setConfigurationEnabled(false);
-
-warning.classList.remove("show");
-
-
-statusElement.textContent =
-"Łączenie z Button Box...";
-
-statusDot.style.background =
-"#e0a72f";
-
-
-console.log(
-"Wywołuję navigator.serial.requestPort()"
-);
-
-
-/* POPUP */
-
-port =
-await navigator.serial.requestPort();
-
-
-console.log(
-"Wybrano port:",
-port
-);
-
-
-/* OTWARCIE PORTU */
-
-await port.open({
-baudRate:115200
-});
-
-
-console.log(
-"Port został otwarty"
-);
-
-
-statusElement.textContent =
-"Połączono — uruchamianie konfiguratora...";
-
-statusDot.style.background =
-"#4caf50";
-
-
-connectButton.textContent =
-"🔌 Rozłącz Button Box";
-
-connectButton.classList.add(
-"disconnect"
-);
-
-
-/* CZYTNIK */
-
-reader =
-port.readable.getReader();
-
-readSerial();
-
-
-/* POBIERAMY USTAWIENIA */
-
-await send("GET");
-
-
-/*
-   NIE CZEKAMY JUŻ NA ODPOWIEDŹ GET.
-
-   Po 1,5 sekundy odblokowujemy konfigurator.
-*/
-
-setTimeout(()=>{
-
-if(
-port &&
-!disconnectHandled
-){
-
-setConfigurationEnabled(true);
-
-warning.classList.remove("show");
-
-statusElement.textContent =
-"Połączono — tryb konfiguracji";
-
-statusDot.style.background =
-"#4caf50";
-
-console.log(
-"Konfiguracja odblokowana"
-);
-
-}
-
-},1500);
-
-
-}catch(error){
-
-console.error(
-"BŁĄD POŁĄCZENIA:",
-error
-);
-
-
-if(error.name === "NotFoundError"){
-
-statusElement.textContent =
-"Nie wybrano Button Boxa";
-
-statusDot.style.background =
-"#777";
-
-port = null;
-
-return;
-
-}
-
-
-statusElement.textContent =
-"Błąd połączenia";
-
-statusDot.style.background =
-"#d9534f";
-
-
-alert(
-"Nie udało się połączyć z Button Boxem.\n\n" +
-error.name +
-"\n\n" +
-error.message
-);
-
-
-port = null;
-
-}
-
-}
-
-
-/* =====================================================
-   SERIAL ODCZYT
-===================================================== */
-
-async function readSerial(){
-
-if(!reader){
-return;
-}
-
-
-try{
-
-while(true){
-
-const result =
-await reader.read();
-
-
-const value =
-result.value;
-
-const done =
-result.done;
-
-
-if(done){
-break;
-}
-
-
-if(value){
-
-const text =
-new TextDecoder().decode(value);
-
-console.log(
-"SERIAL:",
-text
-);
-
-
-buffer += text;
-
-
-const lines =
-buffer.split(/\r?\n/);
-
-buffer =
-lines.pop();
-
-
-for(const line of lines){
-
-if(line.trim()){
-
-handleSerialLine(
-line.trim()
-);
-
-}
-
-}
-
-}
-
-}
-
-}catch(error){
-
-console.error(
-"Błąd odczytu:",
-error
-);
-
-}
-
-}
-
-
-/* =====================================================
-   ODEBRANA LINIA
-===================================================== */
-
-function handleSerialLine(line){
-
-console.log(
-"Button Box →",
-line
-);
-
-
-/* LEWY GÓRA */
-
-if(line.startsWith("LEFT_UP=")){
-
-document.getElementById("leftUp").value =
-line.substring(8);
-
-receivedSettings = true;
-
-}
-
-
-/* LEWY DÓŁ */
-
-else if(line.startsWith("LEFT_DOWN=")){
-
-document.getElementById("leftDown").value =
-line.substring(10);
-
-receivedSettings = true;
-
-}
-
-
-/* PRAWY GÓRA */
-
-else if(line.startsWith("RIGHT_UP=")){
-
-document.getElementById("rightUp").value =
-line.substring(9);
-
-receivedSettings = true;
-
-}
-
-
-/* PRAWY DÓŁ */
-
-else if(line.startsWith("RIGHT_DOWN=")){
-
-document.getElementById("rightDown").value =
-line.substring(11);
-
-receivedSettings = true;
-
-}
-
-
-/* ŚRODKOWY */
-
-else if(line.startsWith("MID=")){
-
-document.getElementById("mid").value =
-line.substring(4);
-
-receivedSettings = true;
-
-}
-
-
-/* CZUWAK */
-
-else if(line.startsWith("CZUWAK=")){
-
-document.getElementById("czuwak").value =
-line.substring(7);
-
-receivedSettings = true;
-
-}
-
-
-/* TRYB KONFIGURACJI */
-
-if(
-line === "CONFIG=1" ||
-line === "CONFIG_MODE=1" ||
-line === "CONFIG OK"
-){
-
-setConfigurationEnabled(true);
-
-warning.classList.remove("show");
-
-statusElement.textContent =
-"Połączono — tryb konfiguracji";
-
-statusDot.style.background =
-"#4caf50";
-
-}
-
-}
-
-
-/* =====================================================
-   WYSYŁANIE
-===================================================== */
-
-async function send(message){
-
-if(!port || !port.writable){
-
-console.warn(
-"Port nie jest dostępny"
-);
-
-return;
-
-}
-
-
-try{
-
-const writer =
-port.writable.getWriter();
-
-
-await writer.write(
-new TextEncoder().encode(
-message + "\n"
-)
-);
-
-
-writer.releaseLock();
-
-
-console.log(
-"Button Box ←",
-message
-);
-
-
-}catch(error){
-
-console.error(
-"Błąd wysyłania:",
-error
-);
-
-}
-
-}
-
-
-/* =====================================================
-   PRZECHWYTYWANIE KLAWISZA
-===================================================== */
-
-function capture(field){
-
-if(!configMode){
-return;
-}
-
-
-capturing = field;
-
-
-document.getElementById(field).value =
-"Naciśnij klawisz...";
-
-}
-
-
-/* =====================================================
-   KLAWIATURA
-===================================================== */
-
-document.addEventListener(
-"keydown",
-function(event){
-
-if(!capturing){
-return;
-}
-
-
-event.preventDefault();
-
-
-let key =
-event.key;
-
-
-if(key === " "){
-key = "Space";
-}
-
-
-const field =
-capturing;
-
-
-capturing = null;
-
-
-document.getElementById(field).value =
-key;
-
-}
-);
-
-
-/* =====================================================
-   ZAPIS
-===================================================== */
-
-async function saveSettings(){
-
-if(!configMode){
-return;
-}
-
-
-const leftUp =
-document.getElementById("leftUp").value;
-
-const leftDown =
-document.getElementById("leftDown").value;
-
-const rightUp =
-document.getElementById("rightUp").value;
-
-const rightDown =
-document.getElementById("rightDown").value;
-
-const mid =
-document.getElementById("mid").value;
-
-const czuwak =
-document.getElementById("czuwak").value;
-
-
-await send(
-"SET LEFT_UP=" + leftUp
-);
-
-await send(
-"SET LEFT_DOWN=" + leftDown
-);
-
-await send(
-"SET RIGHT_UP=" + rightUp
-);
-
-await send(
-"SET RIGHT_DOWN=" + rightDown
-);
-
-await send(
-"SET MID=" + mid
-);
-
-await send(
-"SET CZUWAK=" + czuwak
-);
-
-
-await send("SAVE");
-
-
-statusElement.textContent =
-"Ustawienia zapisane";
-
-
-alert(
-"Ustawienia zostały zapisane w Button Boxie."
-);
-
-}
-
-
-/* =====================================================
-   ROZŁĄCZENIE
-===================================================== */
-
-async function disconnectButtonBox(){
-
-disconnectHandled = true;
-
-
-try{
-
-if(reader){
-
-try{
-await reader.cancel();
-}catch(e){}
-
-try{
-reader.releaseLock();
-}catch(e){}
-
-reader = null;
-
-}
-
-
-if(port){
-
-try{
-await port.close();
-}catch(e){}
-
-port = null;
-
-}
-
-}catch(error){
-
-console.error(
-"Błąd rozłączania:",
-error
-);
-
-}
-
-
-setConfigurationEnabled(false);
-
-clearSettings();
-
-warning.classList.remove("show");
-
-
-statusElement.textContent =
-"Niepołączono z Button Box";
-
-statusDot.style.background =
-"#777";
-
-
-connectButton.textContent =
-"🔌 Połącz z Button Box";
-
-connectButton.classList.remove(
-"disconnect"
-);
-
-}
-
-
-/* =====================================================
-   PRZYCISKI
-===================================================== */
-
-connectButton.addEventListener(
-"click",
-connectButtonBox
-);
-
-
-saveButton.addEventListener(
-"click",
-saveSettings
-);
-
-
-document
-.querySelectorAll(".capture")
-.forEach(button=>{
-
-button.addEventListener(
-"click",
-function(){
-
-capture(
-this.dataset.field
-);
-
-}
-
-});
-
-
-/* =====================================================
-   START
-===================================================== */
-
-setConfigurationEnabled(false);
-
-checkWebSerial();
-
-
-console.log(
-"ButtonBoxEN57 Configurator uruchomiony"
-);
-
-console.log(
-"Web Serial:",
-navigator.serial
-);
-
-</script>
-
-</body>
-</html>
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:7:28: error: stray '\342' in program
+     <title>Button Box EN57 — Konfigurator</title>
+                            ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:7:29: error: stray '\200' in program
+     <title>Button Box EN57 — Konfigurator</title>
+                             ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:7:30: error: stray '\224' in program
+     <title>Button Box EN57 — Konfigurator</title>
+                              ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:17:25: error: stray '#' in program
+             background: #0f1115;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:18:20: error: stray '#' in program
+             color: #ffffff;
+                    ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:34:20: error: stray '#' in program
+             color: #9ca3af;
+                    ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:44:25: error: stray '#' in program
+             background: #181b21;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:45:31: error: stray '#' in program
+             border: 1px solid #292e38;
+                               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:60:25: error: stray '#' in program
+             background: #666;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:64:25: error: stray '#' in program
+             background: #22c55e;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:74:25: error: stray '#' in program
+             background: #2563eb;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:74:26: error: exponent has no digits
+             background: #2563eb;
+                          ^~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:80:25: error: stray '#' in program
+             background: #1d4ed8;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:89:25: error: stray '#' in program
+             background: #181b21;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:90:31: error: stray '#' in program
+             border: 1px solid #292e38;
+                               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:108:25: error: stray '#' in program
+             background: #242018;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:109:31: error: stray '#' in program
+             border: 1px solid #55451f;
+                               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:110:20: error: stray '#' in program
+             color: #e5c76b;
+                    ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:124:20: error: stray '#' in program
+             color: #d1d5db;
+                    ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:132:31: error: stray '#' in program
+             border: 1px solid #363c47;
+                               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:133:25: error: stray '#' in program
+             background: #101217;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:140:27: error: stray '#' in program
+             border-color: #2563eb;
+                           ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:140:28: error: exponent has no digits
+             border-color: #2563eb;
+                            ^~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:148:25: error: stray '#' in program
+             background: #303641;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:152:25: error: stray '#' in program
+             background: #3d4654;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:162:25: error: stray '#' in program
+             background: #16a34a;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:166:25: error: stray '#' in program
+             background: #15803d;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:170:25: error: stray '#' in program
+             background: #0a0c0f;
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:171:31: error: stray '#' in program
+             border: 1px solid #292e38;
+                               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:178:20: error: stray '#' in program
+             color: #9ca3af;
+                    ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:182:9: error: stray '@' in program
+         @media (max-width: 700px) {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:206:30: error: stray '\303' in program
+         Konfigurator przycisków i sterowania
+                              ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:206:31: error: stray '\263' in program
+         Konfigurator przycisków i sterowania
+                               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:213:40: error: stray '\305' in program
+             <span id="statusText">Niepołączono</span>
+                                        ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:213:41: error: stray '\202' in program
+             <span id="statusText">Niepołączono</span>
+                                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:213:42: error: stray '\304' in program
+             <span id="statusText">Niepołączono</span>
+                                          ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:213:43: error: stray '\205' in program
+             <span id="statusText">Niepołączono</span>
+                                           ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:217:15: error: stray '\305' in program
+             Połącz z Button Box
+               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:217:16: error: stray '\202' in program
+             Połącz z Button Box
+                ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:217:17: error: stray '\304' in program
+             Połącz z Button Box
+                 ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:217:18: error: stray '\205' in program
+             Połącz z Button Box
+                  ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:224:20: error: stray '\304' in program
+         Aby zmieniać ustawienia, uruchom Button Box w trybie konfiguracji:
+                    ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:224:21: error: stray '\207' in program
+         Aby zmieniać ustawienia, uruchom Button Box w trybie konfiguracji:
+                     ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:225:21: error: stray '\305' in program
+         <b>CZUWAK + ŚRODKOWY podczas podłączania USB.</b>
+                     ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:225:22: error: stray '\232' in program
+         <b>CZUWAK + ŚRODKOWY podczas podłączania USB.</b>
+                      ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:225:42: error: stray '\305' in program
+         <b>CZUWAK + ŚRODKOWY podczas podłączania USB.</b>
+                                          ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:225:43: error: stray '\202' in program
+         <b>CZUWAK + ŚRODKOWY podczas podłączania USB.</b>
+                                           ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:225:44: error: stray '\304' in program
+         <b>CZUWAK + ŚRODKOWY podczas podłączania USB.</b>
+                                            ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:225:45: error: stray '\205' in program
+         <b>CZUWAK + ŚRODKOWY podczas podłączania USB.</b>
+                                             ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:231:32: error: stray '\303' in program
+         <h2>Ustawienia przycisków</h2>
+                                ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:231:33: error: stray '\263' in program
+         <h2>Ustawienia przycisków</h2>
+                                 ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:235:23: error: stray '\303' in program
+                 Lewy góra
+                       ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:235:24: error: stray '\263' in program
+                 Lewy góra
+                        ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:257:23: error: stray '\303' in program
+                 Lewy dół
+                       ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:257:24: error: stray '\263' in program
+                 Lewy dół
+                        ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:257:25: error: stray '\305' in program
+                 Lewy dół
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:257:26: error: stray '\202' in program
+                 Lewy dół
+                          ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:279:24: error: stray '\303' in program
+                 Prawy góra
+                        ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:279:25: error: stray '\263' in program
+                 Prawy góra
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:301:24: error: stray '\303' in program
+                 Prawy dół
+                        ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:301:25: error: stray '\263' in program
+                 Prawy dół
+                         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:301:26: error: stray '\305' in program
+                 Prawy dół
+                          ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:301:27: error: stray '\202' in program
+                 Prawy dół
+                           ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:323:17: error: stray '\305' in program
+                 Środkowy
+                 ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:323:18: error: stray '\232' in program
+                 Środkowy
+                  ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:755:35: error: stray '\' in program
+                     text.replace(/\r?\n/g, " ")
+                                   ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:755:38: error: stray '\' in program
+                     text.replace(/\r?\n/g, " ")
+                                      ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:760:33: error: stray '\' in program
+                     text.split(/\r?\n/);
+                                 ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:760:36: error: stray '\' in program
+                     text.split(/\r?\n/);
+                                    ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1:1: error: expected unqualified-id before '<' token
+ <!DOCTYPE html>
+ ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:14:9: error: 'body' does not name a type; did you mean 'modf'?
+         body {
+         ^~~~
+         modf
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:21:9: error: expected unqualified-id before '.' token
+         .container {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:28:9: error: 'h1' does not name a type; did you mean 'A1'?
+         h1 {
+         ^~
+         A1
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:33:9: error: expected unqualified-id before '.' token
+         .subtitle {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:38:9: error: expected unqualified-id before '.' token
+         .topbar {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:50:9: error: expected unqualified-id before '.' token
+         .status {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:56:9: error: expected unqualified-id before '.' token
+         .status-dot {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:63:9: error: expected unqualified-id before '.' token
+         .status-dot.connected {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:68:9: error: 'button' does not name a type; did you mean 'ultoa'?
+         button {
+         ^~~~~~
+         ultoa
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:435:1: error: 'function' does not name a type; did you mean 'union'?
+ function log(message) {
+ ^~~~~~~~
+ union
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:478:1: error: 'function' does not name a type; did you mean 'union'?
+ function enableSettings(enable) {
+ ^~~~~~~~
+ union
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:520:1: error: 'function' does not name a type; did you mean 'union'?
+ function checkWebSerial() {
+ ^~~~~~~~
+ union
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:546:1: error: 'asyncfunction' does not name a type
+ async function connectButtonBox() {
+ ^~~~~~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:699:1: error: 'asyncfunction' does not name a type
+ async function readSerial() {
+ ^~~~~~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:812:1: error: 'function' does not name a type; did you mean 'union'?
+ function handleSerialLine(line) {
+ ^~~~~~~~
+ union
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:922:1: error: 'asyncfunction' does not name a type
+ async function send(message) {
+ ^~~~~~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1152:1: error: 'asyncfunction' does not name a type
+ async function disconnectButtonBox() {
+ ^~~~~~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:79:15: error: found ':' in nested-name-specifier, expected '::'
+         button:hover:not(:disabled) {
+               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:79:9: error: 'button' does not name a type; did you mean 'ultoa'?
+         button:hover:not(:disabled) {
+         ^~~~~~
+         ultoa
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:83:15: error: found ':' in nested-name-specifier, expected '::'
+         button:disabled {
+               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:83:9: error: 'button' does not name a type; did you mean 'ultoa'?
+         button:disabled {
+         ^~~~~~
+         ultoa
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:88:9: error: expected unqualified-id before '.' token
+         .card {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:96:9: error: expected unqualified-id before '.' token
+         .card.disabled {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:100:9: error: expected unqualified-id before '.' token
+         .card h2 {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:105:9: error: expected unqualified-id before '.' token
+         .warning {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:115:9: error: expected unqualified-id before '.' token
+         .setting {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:123:9: error: expected unqualified-id before '.' token
+         .setting label {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:128:9: error: 'input' does not name a type; did you mean 'init'?
+         input {
+         ^~~~~
+         init
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:139:14: error: found ':' in nested-name-specifier, expected '::'
+         input:focus {
+              ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:139:9: error: 'input' does not name a type; did you mean 'init'?
+         input:focus {
+         ^~~~~
+         init
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:143:14: error: found ':' in nested-name-specifier, expected '::'
+         input:disabled {
+              ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:143:9: error: 'input' does not name a type; did you mean 'init'?
+         input:disabled {
+         ^~~~~
+         init
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:147:9: error: expected unqualified-id before '.' token
+         .capture {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:151:9: error: expected unqualified-id before '.' token
+         .capture:hover:not(:disabled) {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:155:9: error: expected unqualified-id before '.' token
+         .save-area {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:161:9: error: expected unqualified-id before '.' token
+         .save {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:165:9: error: expected unqualified-id before '.' token
+         .save:hover:not(:disabled) {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:169:9: error: expected unqualified-id before '.' token
+         .console {
+         ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:182:16: error: expected constructor, destructor, or type conversion before '(' token
+         @media (max-width: 700px) {
+                ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:196:5: error: expected unqualified-id before '<' token
+     </style>
+     ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:394:1: error: 'let' does not name a type; did you mean 'gets'?
+ let reader = null;
+ ^~~
+ gets
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:395:1: error: 'let' does not name a type; did you mean 'gets'?
+ let keepReading = false;
+ ^~~
+ gets
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:397:1: error: 'let' does not name a type; did you mean 'gets'?
+ let capturing = null;
+ ^~~
+ gets
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:404:7: error: 'connectButton' does not name a type
+ const connectButton = document.getElementById("connectButton");
+       ^~~~~~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:406:7: error: 'statusText' does not name a type
+ const statusText = document.getElementById("statusText");
+       ^~~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:408:7: error: 'statusDot' does not name a type
+ const statusDot = document.getElementById("statusDot");
+       ^~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:410:7: error: 'settingsCard' does not name a type
+ const settingsCard = document.getElementById("settingsCard");
+       ^~~~~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:412:7: error: 'saveButton' does not name a type
+ const saveButton = document.getElementById("saveButton");
+       ^~~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:414:7: error: 'consoleBox' does not name a type; did you mean 'constexpr'?
+ const consoleBox = document.getElementById("console");
+       ^~~~~~~~~~
+       constexpr
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:421:7: error: 'fields' does not name a type; did you mean 'yield'?
+ const fields = [
+       ^~~~~~
+       yield
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:435:1: error: 'function' does not name a type; did you mean 'union'?
+ function log(message) {
+ ^~~~~~~~
+ union
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:458:1: error: 'function' does not name a type; did you mean 'union'?
+ function setStatus(text, connected = false) {
+ ^~~~~~~~
+ union
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:478:1: error: 'function' does not name a type; did you mean 'union'?
+ function enableSettings(enable) {
+ ^~~~~~~~
+ union
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:520:1: error: 'function' does not name a type; did you mean 'union'?
+ function checkWebSerial() {
+ ^~~~~~~~
+ union
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:546:1: error: 'async' does not name a type; did you mean 'asin'?
+ async function connectButtonBox() {
+ ^~~~~
+ asin
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:699:1: error: 'async' does not name a type; did you mean 'asin'?
+ async function readSerial() {
+ ^~~~~
+ asin
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:812:1: error: 'function' does not name a type; did you mean 'union'?
+ function handleSerialLine(line) {
+ ^~~~~~~~
+ union
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:922:1: error: 'async' does not name a type; did you mean 'asin'?
+ async function send(message) {
+ ^~~~~
+ asin
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:971:1: error: 'document' does not name a type
+ document
+ ^~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:999:6: error: expected unqualified-id before ')' token
+     });
+      ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1006:1: error: 'document' does not name a type
+ document.addEventListener(
+ ^~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1042:1: error: expected unqualified-id before ')' token
+ );
+ ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1049:1: error: 'saveButton' does not name a type
+ saveButton.addEventListener(
+ ^~~~~~~~~~
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1145:1: error: expected unqualified-id before ')' token
+ );
+ ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1152:1: error: 'async' does not name a type; did you mean 'asin'?
+ async function disconnectButtonBox() {
+ ^~~~~
+ asin
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1216:15: error: expected constructor, destructor, or type conversion before '(' token
+ enableSettings(false);
+               ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1218:10: error: expected constructor, destructor, or type conversion before '(' token
+ setStatus(
+          ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1224:17: error: expected constructor, destructor, or type conversion before ';' token
+ checkWebSerial();
+                 ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1227:4: error: expected constructor, destructor, or type conversion before '(' token
+ log(
+    ^
+C:\Users\maciek\Downloads\buttonBox__2_\buttonBox__2_.ino:1232:1: error: expected unqualified-id before '<' token
+ </script>
+ ^
+
+exit status 1
+
+Compilation error: stray '\342' in program
