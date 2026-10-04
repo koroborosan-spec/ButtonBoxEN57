@@ -2,13 +2,11 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ButtonBoxEN57 Configurator</title>
 
 <style>
-*{
-box-sizing:border-box
-}
+*{box-sizing:border-box}
 
 body{
 margin:0;
@@ -85,10 +83,6 @@ color:#fff;
 border:1px solid #363c45
 }
 
-.connect.disconnect:hover{
-background:#303640
-}
-
 .section-title{
 font-size:13px;
 text-transform:uppercase;
@@ -102,12 +96,7 @@ background:#15181d;
 border:1px solid #292e36;
 border-radius:17px;
 padding:17px;
-margin:10px 0;
-transition:.2s
-}
-
-.card:hover{
-border-color:#444b55
+margin:10px 0
 }
 
 .card.disabled{
@@ -164,11 +153,6 @@ input:focus{
 border-color:#777
 }
 
-input:disabled{
-cursor:not-allowed;
-opacity:.7
-}
-
 .capture{
 background:#242931;
 color:#fff;
@@ -179,10 +163,6 @@ font-size:13px;
 font-weight:600;
 cursor:pointer;
 white-space:nowrap
-}
-
-.capture:hover{
-background:#303640
 }
 
 .capture:disabled{
@@ -203,21 +183,10 @@ font-weight:700;
 cursor:pointer
 }
 
-.save:hover{
-background:#ddd
-}
-
 .save:disabled{
 background:#30343a;
 color:#777e88;
 cursor:not-allowed
-}
-
-.info{
-margin-top:18px;
-text-align:center;
-color:#626975;
-font-size:12px
 }
 
 .warning{
@@ -236,11 +205,17 @@ line-height:1.4
 display:block
 }
 
+.info{
+margin-top:18px;
+text-align:center;
+color:#626975;
+font-size:12px
+}
+
 @media(max-width:600px){
 
 .container{
-width:calc(100% - 20px);
-padding-top:25px
+width:calc(100% - 20px)
 }
 
 .logo{
@@ -273,10 +248,7 @@ padding:12px
 <span id="status">Niepołączono z Button Box</span>
 </div>
 
-<button
-class="connect"
-id="connectButton"
-onclick="connect()">
+<button class="connect" id="connectButton">
 🔌 Połącz z Button Box
 </button>
 
@@ -302,10 +274,7 @@ Konfiguracja przycisków
 
 <div class="row">
 <input id="leftUp" disabled>
-<button
-class="capture"
-disabled
-onclick="capture('leftUp')">
+<button class="capture" data-field="leftUp" disabled>
 ⌨️ Naciśnij klawisz
 </button>
 </div>
@@ -323,10 +292,7 @@ onclick="capture('leftUp')">
 
 <div class="row">
 <input id="leftDown" disabled>
-<button
-class="capture"
-disabled
-onclick="capture('leftDown')">
+<button class="capture" data-field="leftDown" disabled>
 ⌨️ Naciśnij klawisz
 </button>
 </div>
@@ -344,10 +310,7 @@ onclick="capture('leftDown')">
 
 <div class="row">
 <input id="rightUp" disabled>
-<button
-class="capture"
-disabled
-onclick="capture('rightUp')">
+<button class="capture" data-field="rightUp" disabled>
 ⌨️ Naciśnij klawisz
 </button>
 </div>
@@ -365,10 +328,7 @@ onclick="capture('rightUp')">
 
 <div class="row">
 <input id="rightDown" disabled>
-<button
-class="capture"
-disabled
-onclick="capture('rightDown')">
+<button class="capture" data-field="rightDown" disabled>
 ⌨️ Naciśnij klawisz
 </button>
 </div>
@@ -386,10 +346,7 @@ onclick="capture('rightDown')">
 
 <div class="row">
 <input id="mid" disabled>
-<button
-class="capture"
-disabled
-onclick="capture('mid')">
+<button class="capture" data-field="mid" disabled>
 ⌨️ Naciśnij klawisz
 </button>
 </div>
@@ -407,21 +364,14 @@ onclick="capture('mid')">
 
 <div class="row">
 <input id="czuwak" disabled>
-<button
-class="capture"
-disabled
-onclick="capture('czuwak')">
+<button class="capture" data-field="czuwak" disabled>
 ⌨️ Naciśnij klawisz
 </button>
 </div>
 </div>
 
 
-<button
-class="save"
-id="saveButton"
-disabled
-onclick="saveSettings()">
+<button class="save" id="saveButton" disabled>
 💾 Zapisz ustawienia
 </button>
 
@@ -436,9 +386,9 @@ ButtonBoxEN57 • Button Box Configuration
 
 <script>
 
-/* ======================================================
+/* =====================================================
    ZMIENNE
-====================================================== */
+===================================================== */
 
 let port = null;
 let reader = null;
@@ -450,9 +400,9 @@ let receivedSettings = false;
 let disconnectHandled = false;
 
 
-/* ======================================================
+/* =====================================================
    ELEMENTY
-====================================================== */
+===================================================== */
 
 const statusElement =
 document.getElementById("status");
@@ -470,11 +420,11 @@ const warning =
 document.getElementById("warning");
 
 
-/* ======================================================
-   START
-====================================================== */
+/* =====================================================
+   SPRAWDZENIE WEB SERIAL
+===================================================== */
 
-window.addEventListener("load", () => {
+function checkWebSerial(){
 
 if(!("serial" in navigator)){
 
@@ -484,78 +434,59 @@ statusElement.textContent =
 statusDot.style.background =
 "#d9534f";
 
-connectButton.disabled = true;
-
-connectButton.textContent =
-"❌ Web Serial niedostępny";
+return false;
 
 }
 
-});
+return true;
+
+}
 
 
-/* ======================================================
-   BLOKOWANIE / ODBLOKOWANIE
-====================================================== */
+/* =====================================================
+   WŁĄCZANIE KONFIGURACJI
+===================================================== */
 
 function setConfigurationEnabled(enabled){
 
 configMode = enabled;
 
-const inputs =
-document.querySelectorAll("input");
-
-const captureButtons =
-document.querySelectorAll(".capture");
-
-const cards =
-document.querySelectorAll(".card");
-
-
-inputs.forEach(input => {
-
+document
+.querySelectorAll("input")
+.forEach(input=>{
 input.disabled = !enabled;
-
 });
 
-
-captureButtons.forEach(button => {
-
+document
+.querySelectorAll(".capture")
+.forEach(button=>{
 button.disabled = !enabled;
-
 });
-
 
 saveButton.disabled = !enabled;
 
-
-cards.forEach(card => {
+document
+.querySelectorAll(".card")
+.forEach(card=>{
 
 if(enabled){
-
 card.classList.remove("disabled");
-
 }else{
-
 card.classList.add("disabled");
-
 }
 
 });
 
-
 if(!enabled){
-
 capturing = null;
-
 }
 
 }
 
 
-/* ======================================================
+/* =====================================================
    CZYSZCZENIE
-====================================================== */
+===================================================== */
 
 function clearSettings(){
 
@@ -569,21 +500,19 @@ document.getElementById("czuwak").value = "";
 }
 
 
-/* ======================================================
+/* =====================================================
    POŁĄCZENIE
-====================================================== */
+===================================================== */
 
-async function connect(){
+async function connectButtonBox(){
 
-/*
-   SPRAWDZENIE WEB SERIAL
-*/
+console.log("Kliknięto Połącz");
 
-if(!("serial" in navigator)){
+if(!checkWebSerial()){
 
 alert(
-"Twoja przeglądarka nie obsługuje Web Serial.\n\n" +
-"Użyj najnowszego Google Chrome albo Microsoft Edge."
+"Web Serial jest niedostępny.\n\n" +
+"Użyj Google Chrome lub Microsoft Edge."
 );
 
 return;
@@ -591,13 +520,11 @@ return;
 }
 
 
-/*
-   JEŻELI JUŻ POŁĄCZONY → ROZŁĄCZ
-*/
+/* JEŚLI JUŻ POŁĄCZONY */
 
 if(port){
 
-await disconnect();
+await disconnectButtonBox();
 
 return;
 
@@ -611,7 +538,6 @@ receivedSettings = false;
 configMode = false;
 
 clearSettings();
-
 setConfigurationEnabled(false);
 
 warning.classList.remove("show");
@@ -624,20 +550,35 @@ statusDot.style.background =
 "#e0a72f";
 
 
-/*
-   OTWARCIE OKNA WYBORU PORTU
-*/
-
-port = await navigator.serial.requestPort();
+console.log(
+"Wywołuję navigator.serial.requestPort()"
+);
 
 
-/*
-   OTWARCIE PORTU
-*/
+/* =================================================
+   TO POWINNO OTWORZYĆ POPUP
+================================================= */
+
+port =
+await navigator.serial.requestPort();
+
+
+console.log(
+"Wybrano port:",
+port
+);
+
+
+/* OTWARCIE */
 
 await port.open({
 baudRate:115200
 });
+
+
+console.log(
+"Port otwarty"
+);
 
 
 statusElement.textContent =
@@ -646,44 +587,36 @@ statusElement.textContent =
 statusDot.style.background =
 "#4caf50";
 
-
 connectButton.textContent =
 "🔌 Rozłącz Button Box";
 
-connectButton.classList.add("disconnect");
+connectButton.classList.add(
+"disconnect"
+);
 
 
-/*
-   START ODCZYTU
-*/
+/* CZYTNIK */
 
 reader =
 port.readable.getReader();
 
-
 readSerial();
 
 
-/*
-   POBRANIE USTAWIEŃ
-*/
+/* POBIERAMY USTAWIENIA */
 
 await send("GET");
 
 
-/*
-   CZEKAJEMY NA ODPOWIEDŹ
-*/
+/* CZEKAMY 4 SEKUNDY */
 
-setTimeout(() => {
+setTimeout(()=>{
 
 if(
 port &&
 !receivedSettings &&
 !disconnectHandled
 ){
-
-configMode = false;
 
 setConfigurationEnabled(false);
 
@@ -699,12 +632,11 @@ statusElement.textContent =
 
 }catch(error){
 
-console.error("Błąd połączenia:",error);
+console.error(
+"BŁĄD POŁĄCZENIA:",
+error
+);
 
-
-/*
-   ANULOWANIE OKNA WYBORU PORTU
-*/
 
 if(error.name === "NotFoundError"){
 
@@ -721,49 +653,54 @@ return;
 }
 
 
-/*
-   INNY BŁĄD
-*/
-
 statusElement.textContent =
 "Błąd połączenia";
 
 statusDot.style.background =
 "#d9534f";
 
-port = null;
 
 alert(
 "Nie udało się połączyć z Button Boxem.\n\n" +
+error.name +
+"\n\n" +
 error.message
 );
 
-}
+
+port = null;
 
 }
 
+}
 
-/* ======================================================
+
+/* =====================================================
    ODCZYT SERIAL
-====================================================== */
+===================================================== */
 
 async function readSerial(){
 
-if(!reader) return;
-
+if(!reader){
+return;
+}
 
 try{
 
 while(true){
 
-const {value,done} =
+const result =
 await reader.read();
+
+const value =
+result.value;
+
+const done =
+result.done;
 
 
 if(done){
-
 break;
-
 }
 
 
@@ -772,14 +709,14 @@ if(value){
 const text =
 new TextDecoder().decode(value);
 
+console.log(
+"SERIAL:",
+text
+);
+
 buffer += text;
 
-
-/*
-   ODCZYT LINIA PO LINII
-*/
-
-let lines =
+const lines =
 buffer.split(/\r?\n/);
 
 buffer =
@@ -814,9 +751,9 @@ error
 }
 
 
-/* ======================================================
-   OBSŁUGA ODEBRANEJ LINII
-====================================================== */
+/* =====================================================
+   OBSŁUGA SERIAL
+===================================================== */
 
 function handleSerialLine(line){
 
@@ -826,15 +763,9 @@ line
 );
 
 
-/*
-   ELASTYCZNE ROZPOZNAWANIE
-   USTAWIEŃ
-*/
+/* LEWY GÓRA */
 
-
-if(
-line.startsWith("LEFT_UP=")
-){
+if(line.startsWith("LEFT_UP=")){
 
 document.getElementById("leftUp").value =
 line.substring(8);
@@ -844,9 +775,9 @@ receivedSettings = true;
 }
 
 
-else if(
-line.startsWith("LEFT_DOWN=")
-){
+/* LEWY DÓŁ */
+
+else if(line.startsWith("LEFT_DOWN=")){
 
 document.getElementById("leftDown").value =
 line.substring(10);
@@ -856,9 +787,9 @@ receivedSettings = true;
 }
 
 
-else if(
-line.startsWith("RIGHT_UP=")
-){
+/* PRAWY GÓRA */
+
+else if(line.startsWith("RIGHT_UP=")){
 
 document.getElementById("rightUp").value =
 line.substring(9);
@@ -868,9 +799,9 @@ receivedSettings = true;
 }
 
 
-else if(
-line.startsWith("RIGHT_DOWN=")
-){
+/* PRAWY DÓŁ */
+
+else if(line.startsWith("RIGHT_DOWN=")){
 
 document.getElementById("rightDown").value =
 line.substring(11);
@@ -880,9 +811,9 @@ receivedSettings = true;
 }
 
 
-else if(
-line.startsWith("MID=")
-){
+/* ŚRODKOWY */
+
+else if(line.startsWith("MID=")){
 
 document.getElementById("mid").value =
 line.substring(4);
@@ -892,9 +823,9 @@ receivedSettings = true;
 }
 
 
-else if(
-line.startsWith("CZUWAK=")
-){
+/* CZUWAK */
+
+else if(line.startsWith("CZUWAK=")){
 
 document.getElementById("czuwak").value =
 line.substring(7);
@@ -904,9 +835,7 @@ receivedSettings = true;
 }
 
 
-/*
-   GOTOWE USTAWIENIA
-*/
+/* TRYB KONFIGURACJI */
 
 if(
 line === "CONFIG=1" ||
@@ -915,8 +844,6 @@ line === "CONFIG OK"
 ){
 
 receivedSettings = true;
-
-configMode = true;
 
 setConfigurationEnabled(true);
 
@@ -931,16 +858,12 @@ statusDot.style.background =
 }
 
 
-/*
-   NORMALNY TRYB
-*/
+/* BRAK TRYBU */
 
 if(
 line === "CONFIG=0" ||
 line === "CONFIG_MODE=0"
 ){
-
-configMode = false;
 
 setConfigurationEnabled(false);
 
@@ -954,9 +877,9 @@ statusElement.textContent =
 }
 
 
-/* ======================================================
+/* =====================================================
    WYSYŁANIE
-====================================================== */
+===================================================== */
 
 async function send(message){
 
@@ -970,12 +893,10 @@ return;
 
 }
 
-
 try{
 
 const writer =
 port.writable.getWriter();
-
 
 await writer.write(
 new TextEncoder().encode(
@@ -983,15 +904,12 @@ message + "\n"
 )
 );
 
-
 writer.releaseLock();
-
 
 console.log(
 "Button Box ←",
 message
 );
-
 
 }catch(error){
 
@@ -1005,120 +923,63 @@ error
 }
 
 
-/* ======================================================
+/* =====================================================
    PRZECHWYTYWANIE KLAWISZA
-====================================================== */
+===================================================== */
 
 function capture(field){
 
 if(!configMode){
-
 return;
-
 }
-
 
 capturing = field;
 
-
-const input =
-document.getElementById(field);
-
-
-input.value =
+document.getElementById(field).value =
 "Naciśnij klawisz...";
 
+}
+
+
+/* =====================================================
+   KLAWIATURA
+===================================================== */
 
 document.addEventListener(
 "keydown",
-captureKey,
-{once:true}
-);
-
-}
-
-
-/* ======================================================
-   ODEBRANIE KLAWISZA Z KLAWIATURY
-====================================================== */
-
-function captureKey(event){
+function(event){
 
 if(!capturing){
-
 return;
-
 }
-
 
 event.preventDefault();
 
-
-let key =
-event.key;
-
-
-/*
-   CZYTELNE NAZWY
-*/
+let key = event.key;
 
 if(key === " "){
 key = "Space";
 }
 
-else if(key === "Backspace"){
-key = "Backspace";
-}
-
-else if(key === "Enter"){
-key = "Enter";
-}
-
-else if(key === "Escape"){
-key = "Escape";
-}
-
-else if(key === "ArrowUp"){
-key = "ArrowUp";
-}
-
-else if(key === "ArrowDown"){
-key = "ArrowDown";
-}
-
-else if(key === "ArrowLeft"){
-key = "ArrowLeft";
-}
-
-else if(key === "ArrowRight"){
-key = "ArrowRight";
-}
-
-
-/*
-   WPISANIE DO POLA
-*/
-
-document.getElementById(
-capturing
-).value = key;
-
+const field = capturing;
 
 capturing = null;
 
+document.getElementById(field).value =
+key;
+
 }
+);
 
 
-/* ======================================================
-   ZAPIS USTAWIEŃ
-====================================================== */
+/* =====================================================
+   ZAPIS
+===================================================== */
 
 async function saveSettings(){
 
 if(!configMode){
-
 return;
-
 }
 
 
@@ -1140,10 +1001,6 @@ document.getElementById("mid").value;
 const czuwak =
 document.getElementById("czuwak").value;
 
-
-/*
-   WYSŁANIE DO BUTTON BOXA
-*/
 
 await send(
 "SET LEFT_UP=" + leftUp
@@ -1169,19 +1026,11 @@ await send(
 "SET CZUWAK=" + czuwak
 );
 
-
-/*
-   ZAPIS
-*/
-
 await send("SAVE");
 
 
 statusElement.textContent =
 "Ustawienia zapisane";
-
-statusDot.style.background =
-"#4caf50";
 
 
 alert(
@@ -1191,11 +1040,11 @@ alert(
 }
 
 
-/* ======================================================
+/* =====================================================
    ROZŁĄCZENIE
-====================================================== */
+===================================================== */
 
-async function disconnect(){
+async function disconnectButtonBox(){
 
 disconnectHandled = true;
 
@@ -1204,12 +1053,12 @@ try{
 if(reader){
 
 try{
-
 await reader.cancel();
-
 }catch(e){}
 
+try{
 reader.releaseLock();
+}catch(e){}
 
 reader = null;
 
@@ -1219,9 +1068,7 @@ reader = null;
 if(port){
 
 try{
-
 await port.close();
-
 }catch(e){}
 
 port = null;
@@ -1237,10 +1084,6 @@ error
 
 }
 
-
-/*
-   RESET UI
-*/
 
 setConfigurationEnabled(false);
 
@@ -1264,31 +1107,62 @@ connectButton.classList.remove(
 }
 
 
-/* ======================================================
-   ZAMKNIĘCIE / ODŚWIEŻENIE STRONY
-====================================================== */
+/* =====================================================
+   PODPIĘCIE PRZYCISKÓW
+   NIE UŻYWAMY onclick=""
+===================================================== */
 
-window.addEventListener(
-"beforeunload",
-async () => {
+connectButton.addEventListener(
+"click",
+connectButtonBox
+);
 
-try{
 
-if(reader){
+saveButton.addEventListener(
+"click",
+saveSettings
+);
 
-await reader.cancel();
+
+document
+.querySelectorAll(".capture")
+.forEach(button=>{
+
+button.addEventListener(
+"click",
+function(){
+
+capture(
+this.dataset.field
+);
 
 }
-
-if(port){
-
-await port.close();
-
-}
-
-}catch(e){}
+);
 
 });
+
+
+/* =====================================================
+   START
+===================================================== */
+
+setConfigurationEnabled(false);
+
+checkWebSerial();
+
+console.log(
+"ButtonBoxEN57 Configurator uruchomiony"
+);
+
+console.log(
+"connectButtonBox:",
+typeof connectButtonBox
+);
+
+console.log(
+"Web Serial:",
+navigator.serial
+);
 
 </script>
 
