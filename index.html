@@ -277,8 +277,6 @@
     </div>
 
 
-    <!-- POŁĄCZENIE -->
-
     <div class="panel">
 
         <button id="connectButton">
@@ -289,8 +287,6 @@
             Status: niepołączono
         </div>
 
-
-        <!-- KOMUNIKAT O TRYBIE KONFIGURACJI -->
 
         <div id="configMessage" class="config-message">
 
@@ -304,8 +300,9 @@
                 <li>Odłącz Button Box od USB.</li>
                 <li>Przytrzymaj jednocześnie <b>CZUWAK</b> i <b>ŚRODKOWY</b>.</li>
                 <li>Trzymając oba przyciski, podłącz Button Box do USB.</li>
-                <li>Poczekaj, aż Button Box uruchomi tryb konfiguracji.</li>
-                <li>Następnie kliknij ponownie „Połącz z Button Box”.</li>
+                <li>Poczekaj chwilę, cały czas trzymając oba przyciski.</li>
+                <li>Puść przyciski.</li>
+                <li>Kliknij ponownie „Połącz z Button Box”.</li>
             </ol>
 
         </div>
@@ -317,8 +314,6 @@
 
     </div>
 
-
-    <!-- USTAWIENIA -->
 
     <div class="panel">
 
@@ -505,17 +500,11 @@
 
         <div class="bottom-buttons">
 
-            <button
-                id="refreshButton"
-                disabled
-            >
+            <button id="refreshButton" disabled>
                 ODCZYTAJ USTAWIENIA
             </button>
 
-            <button
-                id="saveButton"
-                disabled
-            >
+            <button id="saveButton" disabled>
                 ZAPISZ USTAWIENIA
             </button>
 
@@ -530,10 +519,6 @@
 
 "use strict";
 
-
-/* =========================================================
-   ZMIENNE
-========================================================= */
 
 let port = null;
 let reader = null;
@@ -572,14 +557,12 @@ const refreshButton =
 
 
 const fieldNames = [
-
     "leftUp",
     "leftDown",
     "rightUp",
     "rightDown",
     "mid",
     "czuwak"
-
 ];
 
 
@@ -610,24 +593,19 @@ function setConfigurationMode(enabled) {
         enabled;
 
 
-    const captureButtons =
-        document.querySelectorAll(".capture");
+    document
+        .querySelectorAll(".capture")
+        .forEach(button => {
 
+            button.disabled =
+                !enabled;
 
-    captureButtons.forEach(button => {
-
-        button.disabled =
-            !enabled;
-
-    });
+        });
 
 
     fieldNames.forEach(id => {
 
-        const input =
-            document.getElementById(id);
-
-        input.disabled =
+        document.getElementById(id).disabled =
             !enabled;
 
     });
@@ -729,7 +707,7 @@ async function connectButtonBox() {
     try {
 
         /*
-            WYBÓR PORTU
+            WYBÓR URZĄDZENIA
         */
 
         port =
@@ -737,11 +715,11 @@ async function connectButtonBox() {
 
 
         /*
-            OTWARCIE PORTU
+            OTWIERANIE PORTU
         */
 
         setStatus(
-            "sprawdzanie Button Boxa...",
+            "sprawdzanie trybu konfiguracji...",
             "checking"
         );
 
@@ -760,7 +738,7 @@ async function connectButtonBox() {
 
 
         /*
-            START ODBIORU
+            NAJPIERW WŁĄCZAMY ODCZYT.
         */
 
         keepReading =
@@ -770,78 +748,68 @@ async function connectButtonBox() {
 
 
         /*
-            Czekamy chwilę, żeby Arduino
-            zdążyło się uruchomić.
+            Dajemy Arduino czas na start.
         */
 
-        await delay(500);
+        await delay(700);
 
 
         /*
-            POBIERAMY USTAWIENIA
-
-            Jeśli Arduino jest w trybie
-            konfiguracji, odpowie ustawieniami.
+            Wysyłamy GET.
         */
 
-        await sendCommand("GET");
+        await sendCommand(
+            "GET"
+        );
 
 
         /*
-            Dajemy Arduino czas na odpowiedź.
+            Czekamy na odpowiedź.
         */
 
-        await delay(1000);
+        await delay(1500);
 
 
         /*
-            JEŚLI NIE WYKRYLIŚMY TRYBU
-            KONFIGURACJI
+            JEŻELI DOSTALIŚMY USTAWIENIE
+            LUB KOMUNIKAT CONFIG,
+            TO JEST TRYB KONFIGURACJI.
         */
 
-        if (!configurationMode) {
+        if (configurationMode) {
 
             setStatus(
-                "Button Box nie jest w trybie konfiguracji",
-                "warning"
+                "połączono — tryb konfiguracji",
+                "connected"
             );
-
-
-            configMessage.classList.add(
-                "show"
-            );
-
-
-            setConfigurationMode(false);
-
-
-            /*
-                Nie zamykamy automatycznie portu.
-                Użytkownik może kliknąć rozłącz.
-            */
 
             return;
         }
 
 
         /*
-            KONFIGURACJA OK
+            NIE OTRZYMALIŚMY NIC,
+            CO POTWIERDZA KONFIGURACJĘ.
         */
 
         setStatus(
-            "połączono — tryb konfiguracji",
-            "connected"
+            "Button Box nie jest w trybie konfiguracji",
+            "warning"
         );
+
+
+        configMessage.classList.add(
+            "show"
+        );
+
+
+        setConfigurationMode(false);
 
 
     } catch (error) {
 
         console.error(error);
 
-
-        /*
-            Użytkownik anulował wybór portu.
-        */
 
         if (
             error.name ===
@@ -886,12 +854,7 @@ async function connectButtonBox() {
 
 async function startReading() {
 
-    if (!port) {
-        return;
-    }
-
-
-    if (!port.readable) {
+    if (!port || !port.readable) {
         return;
     }
 
@@ -965,11 +928,7 @@ async function startReading() {
     } catch (error) {
 
         if (keepReading) {
-
-            console.error(
-                "Serial read error:",
-                error
-            );
+            console.error(error);
         }
 
 
@@ -988,24 +947,19 @@ async function startReading() {
 
 
 /* =========================================================
-   PARSOWANIE ODPOWIEDZI ARDUINO
+   PARSOWANIE ARDUINO
 ========================================================= */
 
 function parseSerialLine(line) {
 
     /*
-        NAJWAŻNIEJSZE:
-
-        Arduino wysyła w trybie konfiguracji:
-
-        === TRYB KONFIGURACJI ===
-
-        To oznacza, że Button Box jest OK.
+        Wariant 1:
+        jawny komunikat konfiguracji
     */
 
     if (
         line.includes(
-            "=== TRYB KONFIGURACJI ==="
+            "TRYB KONFIGURACJI"
         )
     ) {
 
@@ -1024,8 +978,8 @@ function parseSerialLine(line) {
 
 
     /*
-        Dodatkowe warianty, jeśli kiedyś
-        zmienisz kod Arduino.
+        Wariant 2:
+        Arduino może wysłać CONFIG=1
     */
 
     if (
@@ -1049,7 +1003,141 @@ function parseSerialLine(line) {
 
 
     /*
-        NORMALNY TRYB
+        Jeśli dostaniemy JAKIEKOLWIEK
+        ustawienie konfiguracyjne,
+        uznajemy Button Box za tryb konfiguracji.
+
+        To jest najważniejsza zmiana.
+    */
+
+    if (line.startsWith("LEFT_UP=")) {
+
+        configurationMode =
+            true;
+
+        setConfigurationMode(true);
+
+        setField(
+            "leftUp",
+            line.substring(8)
+        );
+
+        setStatus(
+            "połączono — tryb konfiguracji",
+            "connected"
+        );
+
+        return;
+    }
+
+
+    if (line.startsWith("LEFT_DOWN=")) {
+
+        configurationMode =
+            true;
+
+        setConfigurationMode(true);
+
+        setField(
+            "leftDown",
+            line.substring(10)
+        );
+
+        setStatus(
+            "połączono — tryb konfiguracji",
+            "connected"
+        );
+
+        return;
+    }
+
+
+    if (line.startsWith("RIGHT_UP=")) {
+
+        configurationMode =
+            true;
+
+        setConfigurationMode(true);
+
+        setField(
+            "rightUp",
+            line.substring(9)
+        );
+
+        setStatus(
+            "połączono — tryb konfiguracji",
+            "connected"
+        );
+
+        return;
+    }
+
+
+    if (line.startsWith("RIGHT_DOWN=")) {
+
+        configurationMode =
+            true;
+
+        setConfigurationMode(true);
+
+        setField(
+            "rightDown",
+            line.substring(11)
+        );
+
+        setStatus(
+            "połączono — tryb konfiguracji",
+            "connected"
+        );
+
+        return;
+    }
+
+
+    if (line.startsWith("MID=")) {
+
+        configurationMode =
+            true;
+
+        setConfigurationMode(true);
+
+        setField(
+            "mid",
+            line.substring(4)
+        );
+
+        setStatus(
+            "połączono — tryb konfiguracji",
+            "connected"
+        );
+
+        return;
+    }
+
+
+    if (line.startsWith("CZUWAK=")) {
+
+        configurationMode =
+            true;
+
+        setConfigurationMode(true);
+
+        setField(
+            "czuwak",
+            line.substring(7)
+        );
+
+        setStatus(
+            "połączono — tryb konfiguracji",
+            "connected"
+        );
+
+        return;
+    }
+
+
+    /*
+        Normalny tryb.
     */
 
     if (
@@ -1070,76 +1158,6 @@ function parseSerialLine(line) {
 
         configMessage.classList.add(
             "show"
-        );
-
-        return;
-    }
-
-
-    /*
-        USTAWIENIA
-    */
-
-    if (line.startsWith("LEFT_UP=")) {
-
-        setField(
-            "leftUp",
-            line.substring(8)
-        );
-
-        return;
-    }
-
-
-    if (line.startsWith("LEFT_DOWN=")) {
-
-        setField(
-            "leftDown",
-            line.substring(10)
-        );
-
-        return;
-    }
-
-
-    if (line.startsWith("RIGHT_UP=")) {
-
-        setField(
-            "rightUp",
-            line.substring(9)
-        );
-
-        return;
-    }
-
-
-    if (line.startsWith("RIGHT_DOWN=")) {
-
-        setField(
-            "rightDown",
-            line.substring(11)
-        );
-
-        return;
-    }
-
-
-    if (line.startsWith("MID=")) {
-
-        setField(
-            "mid",
-            line.substring(4)
-        );
-
-        return;
-    }
-
-
-    if (line.startsWith("CZUWAK=")) {
-
-        setField(
-            "czuwak",
-            line.substring(7)
         );
 
         return;
@@ -1168,7 +1186,7 @@ function setField(id, value) {
 
 
 /* =========================================================
-   WYSYŁANIE KOMEND
+   WYSYŁANIE
 ========================================================= */
 
 async function sendCommand(command) {
@@ -1269,13 +1287,14 @@ function validateSettings() {
 
     for (const id of fieldNames) {
 
-        const input =
-            document.getElementById(id);
+        const value =
+            document
+                .getElementById(id)
+                .value
+                .trim();
 
 
-        if (
-            input.value.trim() === ""
-        ) {
+        if (!value) {
 
             alert(
                 "Nie ustawiono wszystkich przycisków.\n\n" +
@@ -1301,15 +1320,10 @@ function getFieldName(id) {
     const names = {
 
         leftUp: "Lewo góra",
-
         leftDown: "Lewo dół",
-
         rightUp: "Prawo góra",
-
         rightDown: "Prawo dół",
-
         mid: "Środkowy",
-
         czuwak: "Czuwak"
 
     };
@@ -1350,13 +1364,11 @@ async function saveSettings() {
     }
 
 
-    const confirmed =
-        confirm(
+    if (
+        !confirm(
             "Czy na pewno chcesz zapisać ustawienia?"
-        );
-
-
-    if (!confirmed) {
+        )
+    ) {
         return;
     }
 
@@ -1496,7 +1508,6 @@ function startKeyCapture(button) {
             button.textContent =
                 "Wybierz";
 
-
             button.classList.remove(
                 "waiting"
             );
@@ -1519,7 +1530,6 @@ function startKeyCapture(button) {
 
     button.textContent =
         "NACIŚNIJ KLAWISZ";
-
 
     button.classList.add(
         "waiting"
@@ -1569,7 +1579,7 @@ function cancelKeyCapture() {
 
 
 /* =========================================================
-   CZYSZCZENIE POŁĄCZENIA
+   CZYSZCZENIE
 ========================================================= */
 
 async function cleanupConnection() {
@@ -1651,10 +1661,8 @@ async function disconnectButtonBox() {
 function delay(ms) {
 
     return new Promise(
-        resolve => setTimeout(
-            resolve,
-            ms
-        )
+        resolve =>
+            setTimeout(resolve, ms)
     );
 }
 
@@ -1689,9 +1697,7 @@ document
             "click",
             function() {
 
-                startKeyCapture(
-                    this
-                );
+                startKeyCapture(this);
 
             }
         );
@@ -1722,10 +1728,6 @@ if ("serial" in navigator) {
                     "error"
                 );
 
-
-                configMessage.classList.add(
-                    "show"
-                );
             }
 
         }
