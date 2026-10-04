@@ -56,7 +56,8 @@ color:#c8ccd2
 width:10px;
 height:10px;
 border-radius:50%;
-background:#777
+background:#777;
+flex-shrink:0
 }
 
 .connect{
@@ -75,6 +76,16 @@ transition:.2s
 .connect:hover{
 background:#ddd;
 transform:translateY(-1px)
+}
+
+.connect.disconnect{
+background:#242931;
+color:#fff;
+border:1px solid #363c45
+}
+
+.connect.disconnect:hover{
+background:#303640
 }
 
 .section-title{
@@ -96,6 +107,10 @@ transition:.2s
 
 .card:hover{
 border-color:#444b55
+}
+
+.card.disabled{
+opacity:.45
 }
 
 .card-top{
@@ -148,6 +163,11 @@ input:focus{
 border-color:#777
 }
 
+input:disabled{
+cursor:not-allowed;
+opacity:.7
+}
+
 .capture{
 background:#242931;
 color:#fff;
@@ -162,6 +182,11 @@ white-space:nowrap
 
 .capture:hover{
 background:#303640
+}
+
+.capture:disabled{
+cursor:not-allowed;
+opacity:.5
 }
 
 .save{
@@ -181,11 +206,33 @@ cursor:pointer
 background:#ddd
 }
 
+.save:disabled{
+background:#30343a;
+color:#777e88;
+cursor:not-allowed
+}
+
 .info{
 margin-top:18px;
 text-align:center;
 color:#626975;
 font-size:12px
+}
+
+.warning{
+display:none;
+background:#211b0f;
+border:1px solid #5b481e;
+color:#d8bd72;
+border-radius:12px;
+padding:13px 15px;
+margin-top:14px;
+font-size:13px;
+line-height:1.4
+}
+
+.warning.show{
+display:block
 }
 
 @media(max-width:600px){
@@ -220,22 +267,33 @@ padding:12px
 <div class="subtitle">Button Box Configurator</div>
 </div>
 
+
 <div class="status">
 <span class="status-dot" id="statusDot"></span>
 <span id="status">Niepołączono z Button Box</span>
 </div>
 
-<button class="connect" onclick="connect()">
+
+<button class="connect" id="connectButton" onclick="connect()">
 🔌 Połącz z Button Box
 </button>
+
+
+<div class="warning" id="warning">
+Aby zmieniać ustawienia, uruchom Button Box w trybie konfiguracji:
+<strong>CZUWAK + ŚRODKOWY podczas podłączania USB.</strong>
+</div>
+
 
 <div class="section-title">
 Konfiguracja przycisków
 </div>
 
+
 <div id="settings">
 
-<div class="card">
+
+<div class="card disabled">
 <div class="card-top">
 <div class="icon">◀️</div>
 <div>
@@ -245,15 +303,15 @@ Konfiguracja przycisków
 </div>
 
 <div class="row">
-<input id="leftUp" value="I">
-<button class="capture" onclick="capture('leftUp')">
+<input id="leftUp" disabled>
+<button class="capture" disabled onclick="capture('leftUp')">
 ⌨️ Naciśnij klawisz
 </button>
 </div>
 </div>
 
 
-<div class="card">
+<div class="card disabled">
 <div class="card-top">
 <div class="icon">🔽</div>
 <div>
@@ -263,15 +321,15 @@ Konfiguracja przycisków
 </div>
 
 <div class="row">
-<input id="leftDown" value="O">
-<button class="capture" onclick="capture('leftDown')">
+<input id="leftDown" disabled>
+<button class="capture" disabled onclick="capture('leftDown')">
 ⌨️ Naciśnij klawisz
 </button>
 </div>
 </div>
 
 
-<div class="card">
+<div class="card disabled">
 <div class="card-top">
 <div class="icon">▶️</div>
 <div>
@@ -281,15 +339,15 @@ Konfiguracja przycisków
 </div>
 
 <div class="row">
-<input id="rightUp" value="P">
-<button class="capture" onclick="capture('rightUp')">
+<input id="rightUp" disabled>
+<button class="capture" disabled onclick="capture('rightUp')">
 ⌨️ Naciśnij klawisz
 </button>
 </div>
 </div>
 
 
-<div class="card">
+<div class="card disabled">
 <div class="card-top">
 <div class="icon">🔽</div>
 <div>
@@ -299,15 +357,15 @@ Konfiguracja przycisków
 </div>
 
 <div class="row">
-<input id="rightDown" value="O">
-<button class="capture" onclick="capture('rightDown')">
+<input id="rightDown" disabled>
+<button class="capture" disabled onclick="capture('rightDown')">
 ⌨️ Naciśnij klawisz
 </button>
 </div>
 </div>
 
 
-<div class="card">
+<div class="card disabled">
 <div class="card-top">
 <div class="icon">⏺️</div>
 <div>
@@ -317,15 +375,15 @@ Konfiguracja przycisków
 </div>
 
 <div class="row">
-<input id="mid" value="BACKSPACE">
-<button class="capture" onclick="capture('mid')">
+<input id="mid" disabled>
+<button class="capture" disabled onclick="capture('mid')">
 ⌨️ Naciśnij klawisz
 </button>
 </div>
 </div>
 
 
-<div class="card">
+<div class="card disabled">
 <div class="card-top">
 <div class="icon">⚠️</div>
 <div>
@@ -335,19 +393,20 @@ Konfiguracja przycisków
 </div>
 
 <div class="row">
-<input id="czuwak" value="SPACE">
-<button class="capture" onclick="capture('czuwak')">
+<input id="czuwak" disabled>
+<button class="capture" disabled onclick="capture('czuwak')">
 ⌨️ Naciśnij klawisz
 </button>
 </div>
 </div>
 
 
-<button class="save" onclick="saveSettings()">
+<button class="save" id="saveButton" disabled onclick="saveSettings()">
 💾 Zapisz ustawienia
 </button>
 
 </div>
+
 
 <div class="info">
 ButtonBoxEN57 • Button Box Configuration
@@ -362,21 +421,121 @@ let port=null;
 let reader=null;
 let buffer="";
 let capturing=null;
+let configMode=false;
+let receivedSettings=false;
+let disconnectHandled=false;
 
+
+/* ======================================================
+   ELEMENTY
+====================================================== */
+
+const statusElement=
+document.getElementById("status");
+
+const statusDot=
+document.getElementById("statusDot");
+
+const connectButton=
+document.getElementById("connectButton");
+
+const saveButton=
+document.getElementById("saveButton");
+
+const warning=
+document.getElementById("warning");
+
+
+/* ======================================================
+   BLOKOWANIE / ODBLOKOWANIE KONFIGURACJI
+====================================================== */
+
+function setConfigurationEnabled(enabled){
+
+configMode=enabled;
+
+const inputs=document.querySelectorAll("input");
+const captureButtons=document.querySelectorAll(".capture");
+const cards=document.querySelectorAll(".card");
+
+inputs.forEach(input=>{
+input.disabled=!enabled;
+});
+
+captureButtons.forEach(button=>{
+button.disabled=!enabled;
+});
+
+saveButton.disabled=!enabled;
+
+cards.forEach(card=>{
+if(enabled){
+card.classList.remove("disabled");
+}else{
+card.classList.add("disabled");
+}
+});
+
+if(!enabled){
+capturing=null;
+}
+
+}
+
+
+/* ======================================================
+   WYCZYSZCZENIE USTAWIEŃ
+====================================================== */
+
+function clearSettings(){
+
+document.getElementById("leftUp").value="";
+document.getElementById("leftDown").value="";
+document.getElementById("rightUp").value="";
+document.getElementById("rightDown").value="";
+document.getElementById("mid").value="";
+document.getElementById("czuwak").value="";
+
+}
+
+
+/* ======================================================
+   POŁĄCZENIE
+====================================================== */
 
 async function connect(){
 
 try{
 
+disconnectHandled=false;
+receivedSettings=false;
+configMode=false;
+
+clearSettings();
+setConfigurationEnabled(false);
+
+warning.classList.remove("show");
+
+statusElement.textContent=
+"Łączenie z Button Box...";
+
+statusDot.style.background="#e0a72f";
+
 port=await navigator.serial.requestPort();
 
-await port.open({baudRate:115200});
+await port.open({
+baudRate:115200
+});
 
-document.getElementById("status").textContent=
-"Połączono z Button Box";
+statusElement.textContent=
+"Połączono — sprawdzanie trybu konfiguracji...";
 
-document.getElementById("statusDot").style.background=
-"#4caf50";
+statusDot.style.background="#4caf50";
+
+connectButton.textContent=
+"🔌 Rozłącz Button Box";
+
+connectButton.classList.add("disconnect");
 
 reader=port.readable.getReader();
 
@@ -384,236 +543,29 @@ readSerial();
 
 await send("GET");
 
-}catch(e){
 
-document.getElementById("status").textContent=
-"Błąd połączenia: "+e;
-
-document.getElementById("statusDot").style.background=
-"#e53935";
-
-}
-
-}
-
-
-async function readSerial(){
-
-while(port&&port.readable){
-
-try{
-
-const {value,done}=await reader.read();
-
-if(done)break;
-
-if(value){
-
-buffer+=new TextDecoder().decode(value);
-
-let lines=buffer.split("\n");
-
-buffer=lines.pop();
-
-lines.forEach(line=>handleLine(line.trim()));
-
-}
-
-}catch(e){
-
-break;
-
-}
-
-}
-
-}
-
-
-function handleLine(line){
-
-if(!line)return;
-
-if(line.startsWith("LEFT_UP="))
-document.getElementById("leftUp").value=
-line.substring(9);
-
-else if(line.startsWith("LEFT_DOWN="))
-document.getElementById("leftDown").value=
-line.substring(11);
-
-else if(line.startsWith("RIGHT_UP="))
-document.getElementById("rightUp").value=
-line.substring(10);
-
-else if(line.startsWith("RIGHT_DOWN="))
-document.getElementById("rightDown").value=
-line.substring(12);
-
-else if(line.startsWith("MID="))
-document.getElementById("mid").value=
-line.substring(4);
-
-else if(line.startsWith("CZUWAK="))
-document.getElementById("czuwak").value=
-line.substring(7);
-
-}
-
-
-async function send(command){
-
-if(!port||!port.writable)return;
-
-const writer=port.writable.getWriter();
-
-await writer.write(
-new TextEncoder().encode(command+"\n")
-);
-
-writer.releaseLock();
-
-}
-
-
-async function saveSettings(){
-
-await send(
-"SET LEFT_UP "+
-document.getElementById("leftUp").value
-);
-
-await send(
-"SET LEFT_DOWN "+
-document.getElementById("leftDown").value
-);
-
-await send(
-"SET RIGHT_UP "+
-document.getElementById("rightUp").value
-);
-
-await send(
-"SET RIGHT_DOWN "+
-document.getElementById("rightDown").value
-);
-
-await send(
-"SET MID "+
-document.getElementById("mid").value
-);
-
-await send(
-"SET CZUWAK "+
-document.getElementById("czuwak").value
-);
-
-document.getElementById("status").textContent=
-"Ustawienia zapisane";
-
-}
-
-
-function keyName(e){
-
-let key=e.key;
-
-if(key===" ")
-return"SPACE";
-
-const special={
-
-Backspace:"BACKSPACE",
-Enter:"ENTER",
-Tab:"TAB",
-Escape:"ESC",
-ArrowUp:"UP",
-ArrowDown:"DOWN",
-ArrowLeft:"LEFT",
-ArrowRight:"RIGHT",
-Delete:"DELETE",
-Home:"HOME",
-End:"END",
-PageUp:"PAGEUP",
-PageDown:"PAGEDOWN"
-
-};
-
-if(special[key])
-return special[key];
-
-if(/^F([1-9]|1[0-2])$/.test(key))
-return key;
-
-if(key.length===1)
-return key.toUpperCase();
-
-return null;
-
-}
-
-
-function capture(id){
-
-capturing=id;
-
-document.getElementById(id).value=
-"Naciśnij...";
-
-document.getElementById("status").textContent=
-"Naciśnij kombinację dla: "+id;
-
-}
-
-
-document.addEventListener("keydown",e=>{
-
-if(!capturing)return;
-
-e.preventDefault();
-e.stopPropagation();
+/*
+Czekamy na odpowiedź GET.
+Button Box potrzebuje czasu na uruchomienie.
+Jeżeli przez 4 sekundy nie dostaniemy ustawień,
+oznacza to najprawdopodobniej normalny tryb pracy.
+*/
+
+setTimeout(()=>{
 
 if(
-["Control","Shift","Alt","Meta"].includes(e.key)
-)return;
+port &&
+!receivedSettings &&
+!disconnectHandled
+){
 
-let keys=[];
+configMode=false;
 
-if(e.ctrlKey)
-keys.push("CTRL");
+setConfigurationEnabled(false);
 
-if(e.shiftKey)
-keys.push("SHIFT");
+warning.classList.add("show");
 
-if(e.altKey)
-keys.push("ALT");
+statusElement.textContent=
+"Połączono, ale Button Box nie jest w trybie konfiguracji";
 
-if(e.metaKey)
-keys.push("GUI");
 
-const main=keyName(e);
-
-if(main)
-keys.push(main);
-
-if(keys.length){
-
-document.getElementById(capturing).value=
-keys.join("+");
-
-capturing=null;
-
-document.getElementById("status").textContent=
-"Kombinacja ustawiona";
-
-}
-
-});
-
-</script>
-
-</body>
-</html>
-```
-
-Teraz **pierwsza rzecz w pliku to `<!DOCTYPE html>`**, więc nie powinien pojawić się żaden samotny napis `html`.
