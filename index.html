@@ -83,6 +83,10 @@ color:#fff;
 border:1px solid #363c45
 }
 
+.connect.disconnect:hover{
+background:#303640
+}
+
 .section-title{
 font-size:13px;
 text-transform:uppercase;
@@ -165,6 +169,10 @@ cursor:pointer;
 white-space:nowrap
 }
 
+.capture:hover{
+background:#303640
+}
+
 .capture:disabled{
 cursor:not-allowed;
 opacity:.5
@@ -181,6 +189,10 @@ color:#111;
 font-size:16px;
 font-weight:700;
 cursor:pointer
+}
+
+.save:hover{
+background:#ddd
 }
 
 .save:disabled{
@@ -215,7 +227,8 @@ font-size:12px
 @media(max-width:600px){
 
 .container{
-width:calc(100% - 20px)
+width:calc(100% - 20px);
+padding-top:25px
 }
 
 .logo{
@@ -243,25 +256,31 @@ padding:12px
 <div class="subtitle">Button Box Configurator</div>
 </div>
 
+
 <div class="status">
 <span class="status-dot" id="statusDot"></span>
 <span id="status">Niepołączono z Button Box</span>
 </div>
 
+
 <button class="connect" id="connectButton">
 🔌 Połącz z Button Box
 </button>
+
 
 <div class="warning" id="warning">
 Aby zmieniać ustawienia, uruchom Button Box w trybie konfiguracji:
 <strong>CZUWAK + ŚRODKOWY podczas podłączania USB.</strong>
 </div>
 
+
 <div class="section-title">
 Konfiguracja przycisków
 </div>
 
+
 <div id="settings">
+
 
 <div class="card disabled">
 <div class="card-top">
@@ -377,6 +396,7 @@ Konfiguracja przycisków
 
 </div>
 
+
 <div class="info">
 ButtonBoxEN57 • Button Box Configuration
 </div>
@@ -385,10 +405,6 @@ ButtonBoxEN57 • Button Box Configuration
 
 
 <script>
-
-/* =====================================================
-   ZMIENNE
-===================================================== */
 
 let port = null;
 let reader = null;
@@ -421,7 +437,7 @@ document.getElementById("warning");
 
 
 /* =====================================================
-   SPRAWDZENIE WEB SERIAL
+   WEB SERIAL
 ===================================================== */
 
 function checkWebSerial(){
@@ -465,20 +481,28 @@ button.disabled = !enabled;
 
 saveButton.disabled = !enabled;
 
+
 document
 .querySelectorAll(".card")
 .forEach(card=>{
 
 if(enabled){
+
 card.classList.remove("disabled");
+
 }else{
+
 card.classList.add("disabled");
+
 }
 
 });
 
+
 if(!enabled){
+
 capturing = null;
+
 }
 
 }
@@ -507,6 +531,7 @@ document.getElementById("czuwak").value = "";
 async function connectButtonBox(){
 
 console.log("Kliknięto Połącz");
+
 
 if(!checkWebSerial()){
 
@@ -555,9 +580,7 @@ console.log(
 );
 
 
-/* =================================================
-   TO POWINNO OTWORZYĆ POPUP
-================================================= */
+/* POPUP */
 
 port =
 await navigator.serial.requestPort();
@@ -569,7 +592,7 @@ port
 );
 
 
-/* OTWARCIE */
+/* OTWARCIE PORTU */
 
 await port.open({
 baudRate:115200
@@ -577,15 +600,16 @@ baudRate:115200
 
 
 console.log(
-"Port otwarty"
+"Port został otwarty"
 );
 
 
 statusElement.textContent =
-"Połączono — sprawdzanie trybu konfiguracji...";
+"Połączono — uruchamianie konfiguratora...";
 
 statusDot.style.background =
 "#4caf50";
+
 
 connectButton.textContent =
 "🔌 Rozłącz Button Box";
@@ -608,26 +632,36 @@ readSerial();
 await send("GET");
 
 
-/* CZEKAMY 4 SEKUNDY */
+/*
+   NIE CZEKAMY JUŻ NA ODPOWIEDŹ GET.
+
+   Po 1,5 sekundy odblokowujemy konfigurator.
+*/
 
 setTimeout(()=>{
 
 if(
 port &&
-!receivedSettings &&
 !disconnectHandled
 ){
 
-setConfigurationEnabled(false);
+setConfigurationEnabled(true);
 
-warning.classList.add("show");
+warning.classList.remove("show");
 
 statusElement.textContent =
-"Połączono, ale Button Box nie jest w trybie konfiguracji";
+"Połączono — tryb konfiguracji";
+
+statusDot.style.background =
+"#4caf50";
+
+console.log(
+"Konfiguracja odblokowana"
+);
 
 }
 
-},4000);
+},1500);
 
 
 }catch(error){
@@ -676,7 +710,7 @@ port = null;
 
 
 /* =====================================================
-   ODCZYT SERIAL
+   SERIAL ODCZYT
 ===================================================== */
 
 async function readSerial(){
@@ -685,12 +719,14 @@ if(!reader){
 return;
 }
 
+
 try{
 
 while(true){
 
 const result =
 await reader.read();
+
 
 const value =
 result.value;
@@ -714,7 +750,9 @@ console.log(
 text
 );
 
+
 buffer += text;
+
 
 const lines =
 buffer.split(/\r?\n/);
@@ -752,7 +790,7 @@ error
 
 
 /* =====================================================
-   OBSŁUGA SERIAL
+   ODEBRANA LINIA
 ===================================================== */
 
 function handleSerialLine(line){
@@ -843,8 +881,6 @@ line === "CONFIG_MODE=1" ||
 line === "CONFIG OK"
 ){
 
-receivedSettings = true;
-
 setConfigurationEnabled(true);
 
 warning.classList.remove("show");
@@ -854,23 +890,6 @@ statusElement.textContent =
 
 statusDot.style.background =
 "#4caf50";
-
-}
-
-
-/* BRAK TRYBU */
-
-if(
-line === "CONFIG=0" ||
-line === "CONFIG_MODE=0"
-){
-
-setConfigurationEnabled(false);
-
-warning.classList.add("show");
-
-statusElement.textContent =
-"Połączono, ale brak trybu konfiguracji";
 
 }
 
@@ -893,10 +912,12 @@ return;
 
 }
 
+
 try{
 
 const writer =
 port.writable.getWriter();
+
 
 await writer.write(
 new TextEncoder().encode(
@@ -904,12 +925,15 @@ message + "\n"
 )
 );
 
+
 writer.releaseLock();
+
 
 console.log(
 "Button Box ←",
 message
 );
+
 
 }catch(error){
 
@@ -933,7 +957,9 @@ if(!configMode){
 return;
 }
 
+
 capturing = field;
+
 
 document.getElementById(field).value =
 "Naciśnij klawisz...";
@@ -953,17 +979,25 @@ if(!capturing){
 return;
 }
 
+
 event.preventDefault();
 
-let key = event.key;
+
+let key =
+event.key;
+
 
 if(key === " "){
 key = "Space";
 }
 
-const field = capturing;
+
+const field =
+capturing;
+
 
 capturing = null;
+
 
 document.getElementById(field).value =
 key;
@@ -1026,6 +1060,7 @@ await send(
 "SET CZUWAK=" + czuwak
 );
 
+
 await send("SAVE");
 
 
@@ -1047,6 +1082,7 @@ alert(
 async function disconnectButtonBox(){
 
 disconnectHandled = true;
+
 
 try{
 
@@ -1091,11 +1127,13 @@ clearSettings();
 
 warning.classList.remove("show");
 
+
 statusElement.textContent =
 "Niepołączono z Button Box";
 
 statusDot.style.background =
 "#777";
+
 
 connectButton.textContent =
 "🔌 Połącz z Button Box";
@@ -1108,8 +1146,7 @@ connectButton.classList.remove(
 
 
 /* =====================================================
-   PODPIĘCIE PRZYCISKÓW
-   NIE UŻYWAMY onclick=""
+   PRZYCISKI
 ===================================================== */
 
 connectButton.addEventListener(
@@ -1137,7 +1174,6 @@ this.dataset.field
 );
 
 }
-);
 
 });
 
@@ -1150,13 +1186,9 @@ setConfigurationEnabled(false);
 
 checkWebSerial();
 
-console.log(
-"ButtonBoxEN57 Configurator uruchomiony"
-);
 
 console.log(
-"connectButtonBox:",
-typeof connectButtonBox
+"ButtonBoxEN57 Configurator uruchomiony"
 );
 
 console.log(
