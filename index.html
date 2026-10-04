@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Konfigurator Button Box EN57">
-    <meta name="theme-color" content="#111318">
-
     <title>Button Box EN57 - Konfigurator</title>
 
     <style>
@@ -19,14 +16,14 @@
             margin: 0;
             padding: 0;
             background: #111318;
-            color: #ffffff;
+            color: white;
             font-family: Arial, Helvetica, sans-serif;
         }
 
         .container {
             width: 92%;
             max-width: 850px;
-            margin: 40px auto;
+            margin: 45px auto;
         }
 
         h1 {
@@ -44,7 +41,7 @@
         .panel {
             background: #1b1e25;
             border-radius: 14px;
-            padding: 24px;
+            padding: 25px;
             margin-bottom: 20px;
             border: 1px solid #292d36;
         }
@@ -69,18 +66,12 @@
 
         button:hover:not(:disabled) {
             background: #1d4ed8;
-            transform: translateY(-1px);
-        }
-
-        button:active:not(:disabled) {
-            transform: translateY(0);
         }
 
         button:disabled {
             background: #3a3d44;
             color: #777;
             cursor: not-allowed;
-            transform: none;
         }
 
         #connectButton {
@@ -99,7 +90,7 @@
 
         #status {
             margin-top: 15px;
-            padding: 13px;
+            padding: 14px;
             border-radius: 8px;
             background: #252932;
             color: #aaa;
@@ -115,6 +106,16 @@
         #status.error {
             background: #3b1717;
             color: #f87171;
+        }
+
+        #status.warning {
+            background: #33270e;
+            color: #fbbf24;
+        }
+
+        #status.checking {
+            background: #17233a;
+            color: #60a5fa;
         }
 
         .settings {
@@ -151,10 +152,6 @@
             padding: 10px;
             font-size: 16px;
             outline: none;
-        }
-
-        input:focus {
-            border-color: #2563eb;
         }
 
         input:disabled {
@@ -196,49 +193,50 @@
             background: #374151;
         }
 
-        .info {
-            color: #999;
-            font-size: 13px;
-            line-height: 1.5;
-            margin-top: 15px;
-        }
-
-        .console {
-            background: #08090b;
-            border-radius: 8px;
-            padding: 15px;
-            height: 220px;
-            overflow-y: auto;
-            font-family: Consolas, monospace;
-            font-size: 13px;
-            color: #aaa;
-            border: 1px solid #292d36;
-        }
-
-        .console .success {
-            color: #4ade80;
-        }
-
-        .console .error {
-            color: #f87171;
-        }
-
-        .console .tx {
-            color: #60a5fa;
-        }
-
-        .console .rx {
-            color: #c084fc;
-        }
-
-        .warning {
+        .config-message {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
             background: #33270e;
+            border: 1px solid #806318;
             color: #fbbf24;
-            padding: 13px;
+            line-height: 1.6;
+        }
+
+        .config-message.show {
+            display: block;
+        }
+
+        .config-message strong {
+            display: block;
+            color: #ffffff;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .config-message ol {
+            margin-bottom: 0;
+            padding-left: 22px;
+        }
+
+        .config-message li {
+            margin-bottom: 6px;
+        }
+
+        .success-message {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
             border-radius: 8px;
-            margin-top: 15px;
-            font-size: 13px;
-            line-height: 1.5;
+            background: #12351f;
+            color: #4ade80;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .success-message.show {
+            display: block;
         }
 
         @media (max-width: 650px) {
@@ -291,9 +289,30 @@
             Status: niepołączono
         </div>
 
-        <div class="warning">
-            Podłącz Button Box przed rozpoczęciem konfiguracji.
-            Zamknij Arduino IDE Serial Monitor przed połączeniem.
+
+        <!-- KOMUNIKAT O TRYBIE KONFIGURACJI -->
+
+        <div id="configMessage" class="config-message">
+
+            <strong>
+                Button Box nie jest w trybie konfiguracji
+            </strong>
+
+            Aby wejść w tryb konfiguracji:
+
+            <ol>
+                <li>Odłącz Button Box od USB.</li>
+                <li>Przytrzymaj jednocześnie <b>CZUWAK</b> i <b>ŚRODKOWY</b>.</li>
+                <li>Trzymając oba przyciski, podłącz Button Box do USB.</li>
+                <li>Poczekaj, aż Button Box uruchomi tryb konfiguracji.</li>
+                <li>Następnie kliknij ponownie „Połącz z Button Box”.</li>
+            </ol>
+
+        </div>
+
+
+        <div id="successMessage" class="success-message">
+            Button Box jest w trybie konfiguracji.
         </div>
 
     </div>
@@ -306,6 +325,7 @@
         <h2>Ustawienia przycisków</h2>
 
         <div class="settings">
+
 
             <div class="setting">
 
@@ -501,23 +521,6 @@
 
         </div>
 
-        <div class="info">
-            Kliknij „Wybierz”, a następnie naciśnij wybrany klawisz
-            na klawiaturze. Ustawienia zostaną zapisane w Button Boxie
-            dopiero po kliknięciu „Zapisz ustawienia”.
-        </div>
-
-    </div>
-
-
-    <!-- SERIAL -->
-
-    <div class="panel">
-
-        <h2>Komunikacja</h2>
-
-        <div id="console" class="console"></div>
-
     </div>
 
 </div>
@@ -539,6 +542,8 @@ let keepReading = false;
 let connecting = false;
 let saving = false;
 
+let configurationMode = false;
+
 let captureHandler = null;
 let captureButton = null;
 
@@ -553,14 +558,17 @@ const connectButton =
 const statusBox =
     document.getElementById("status");
 
+const configMessage =
+    document.getElementById("configMessage");
+
+const successMessage =
+    document.getElementById("successMessage");
+
 const saveButton =
     document.getElementById("saveButton");
 
 const refreshButton =
     document.getElementById("refreshButton");
-
-const consoleBox =
-    document.getElementById("console");
 
 
 const fieldNames = [
@@ -573,29 +581,6 @@ const fieldNames = [
     "czuwak"
 
 ];
-
-
-/* =========================================================
-   LOG
-========================================================= */
-
-function log(text, type = "") {
-
-    const line =
-        document.createElement("div");
-
-    line.textContent =
-        "> " + text;
-
-    if (type) {
-        line.className = type;
-    }
-
-    consoleBox.appendChild(line);
-
-    consoleBox.scrollTop =
-        consoleBox.scrollHeight;
-}
 
 
 /* =========================================================
@@ -616,18 +601,23 @@ function setStatus(text, type = "") {
 
 
 /* =========================================================
-   BLOKOWANIE / ODBLOKOWANIE
+   TRYB KONFIGURACJI
 ========================================================= */
 
-function setConnectedState(connected) {
+function setConfigurationMode(enabled) {
+
+    configurationMode =
+        enabled;
+
 
     const captureButtons =
         document.querySelectorAll(".capture");
 
+
     captureButtons.forEach(button => {
 
         button.disabled =
-            !connected;
+            !enabled;
 
     });
 
@@ -638,34 +628,47 @@ function setConnectedState(connected) {
             document.getElementById(id);
 
         input.disabled =
-            !connected;
+            !enabled;
 
     });
 
 
     saveButton.disabled =
-        !connected;
+        !enabled;
 
     refreshButton.disabled =
-        !connected;
+        !enabled;
+
+
+    if (enabled) {
+
+        configMessage.classList.remove(
+            "show"
+        );
+
+        successMessage.classList.add(
+            "show"
+        );
+
+    } else {
+
+        successMessage.classList.remove(
+            "show"
+        );
+    }
 }
 
 
 /* =========================================================
-   SPRAWDZENIE WEB SERIAL
+   WEB SERIAL
 ========================================================= */
 
 function checkWebSerial() {
 
     if (!("serial" in navigator)) {
 
-        log(
-            "Web Serial nie jest dostępny.",
-            "error"
-        );
-
         alert(
-            "Twoja przeglądarka nie obsługuje Web Serial.\n\n" +
+            "Ta przeglądarka nie obsługuje Web Serial.\n\n" +
             "Użyj aktualnego Google Chrome albo Microsoft Edge."
         );
 
@@ -686,6 +689,7 @@ async function connectButtonBox() {
         return;
     }
 
+
     if (port) {
 
         await disconnectButtonBox();
@@ -701,63 +705,50 @@ async function connectButtonBox() {
 
     connecting = true;
 
-    connectButton.disabled = true;
+    connectButton.disabled =
+        true;
 
-    log(
-        "Rozpoczynam połączenie...",
-        "tx"
+
+    configurationMode =
+        false;
+
+    setConfigurationMode(false);
+
+
+    configMessage.classList.remove(
+        "show"
+    );
+
+
+    setStatus(
+        "wybierz Button Box...",
+        "checking"
     );
 
 
     try {
 
-        setStatus("wybierz Button Box...");
-
-        log("Otwieram wybór urządzenia...");
-
-
         /*
-            requestPort MUSI być wykonane po kliknięciu
-            użytkownika. Dlatego znajduje się bezpośrednio
-            w tej funkcji.
+            WYBÓR PORTU
         */
 
         port =
             await navigator.serial.requestPort();
 
 
-        if (!port) {
+        /*
+            OTWARCIE PORTU
+        */
 
-            throw new Error(
-                "Nie wybrano urządzenia."
-            );
-        }
-
-
-        log(
-            "Urządzenie wybrane.",
-            "success"
+        setStatus(
+            "sprawdzanie Button Boxa...",
+            "checking"
         );
-
-
-        setStatus("otwieranie portu...");
 
 
         await port.open({
             baudRate: 115200
         });
-
-
-        log(
-            "Port otwarty.",
-            "success"
-        );
-
-
-        setStatus(
-            "połączono",
-            "connected"
-        );
 
 
         connectButton.textContent =
@@ -768,109 +759,124 @@ async function connectButtonBox() {
         );
 
 
-        setConnectedState(true);
-
-
-        keepReading = true;
-
-
         /*
-            Czytanie uruchamiamy przed GET,
-            żeby nie zgubić odpowiedzi.
+            START ODBIORU
         */
+
+        keepReading =
+            true;
 
         startReading();
 
 
         /*
-            Krótka chwila na reset/uruchomienie
-            mikrokontrolera.
+            Czekamy chwilę, żeby Arduino
+            zdążyło się uruchomić.
         */
 
-        await delay(300);
+        await delay(500);
 
+
+        /*
+            POBIERAMY USTAWIENIA
+
+            Jeśli Arduino jest w trybie
+            konfiguracji, odpowie ustawieniami.
+        */
 
         await sendCommand("GET");
 
 
-        log(
-            "Wysłano żądanie ustawień.",
-            "tx"
+        /*
+            Dajemy Arduino czas na odpowiedź.
+        */
+
+        await delay(1000);
+
+
+        /*
+            JEŚLI NIE WYKRYLIŚMY TRYBU
+            KONFIGURACJI
+        */
+
+        if (!configurationMode) {
+
+            setStatus(
+                "Button Box nie jest w trybie konfiguracji",
+                "warning"
+            );
+
+
+            configMessage.classList.add(
+                "show"
+            );
+
+
+            setConfigurationMode(false);
+
+
+            /*
+                Nie zamykamy automatycznie portu.
+                Użytkownik może kliknąć rozłącz.
+            */
+
+            return;
+        }
+
+
+        /*
+            KONFIGURACJA OK
+        */
+
+        setStatus(
+            "połączono — tryb konfiguracji",
+            "connected"
         );
 
 
     } catch (error) {
 
-        log(
-            "BŁĄD POŁĄCZENIA: " +
-            error.message,
-            "error"
-        );
-
-
         console.error(error);
 
 
-        try {
+        /*
+            Użytkownik anulował wybór portu.
+        */
 
-            if (reader) {
-                await reader.cancel();
-            }
+        if (
+            error.name ===
+            "NotFoundError"
+        ) {
 
-        } catch (e) {}
+            setStatus(
+                "nie wybrano urządzenia"
+            );
 
+        } else {
 
-        try {
+            setStatus(
+                "błąd połączenia",
+                "error"
+            );
 
-            if (port) {
-                await port.close();
-            }
-
-        } catch (e) {}
-
-
-        reader = null;
-        port = null;
-        keepReading = false;
-
-
-        setConnectedState(false);
-
-        setStatus(
-            "błąd połączenia",
-            "error"
-        );
+            alert(
+                "Nie udało się połączyć z Button Boxem.\n\n" +
+                error.message
+            );
+        }
 
 
-        connectButton.textContent =
-            "POŁĄCZ Z BUTTON BOX";
-
-        connectButton.classList.remove(
-            "connected"
-        );
+        await cleanupConnection();
 
 
     } finally {
 
-        connecting = false;
+        connecting =
+            false;
 
         connectButton.disabled =
             false;
     }
-}
-
-
-/* =========================================================
-   OPÓŹNIENIE
-========================================================= */
-
-function delay(ms) {
-
-    return new Promise(resolve => {
-
-        setTimeout(resolve, ms);
-
-    });
 }
 
 
@@ -884,13 +890,8 @@ async function startReading() {
         return;
     }
 
+
     if (!port.readable) {
-
-        log(
-            "Port nie jest dostępny do odczytu.",
-            "error"
-        );
-
         return;
     }
 
@@ -905,7 +906,8 @@ async function startReading() {
             new TextDecoder();
 
 
-        let buffer = "";
+        let buffer =
+            "";
 
 
         while (keepReading) {
@@ -950,15 +952,9 @@ async function startReading() {
                     line.trim();
 
 
-                if (clean.length === 0) {
+                if (!clean) {
                     continue;
                 }
-
-
-                log(
-                    "RX: " + clean,
-                    "rx"
-                );
 
 
                 parseSerialLine(clean);
@@ -968,17 +964,11 @@ async function startReading() {
 
     } catch (error) {
 
-        /*
-            Abort przy zamykaniu portu nie jest
-            traktowany jako poważny błąd.
-        */
-
         if (keepReading) {
 
-            log(
-                "BŁĄD ODCZYTU: " +
-                error.message,
-                "error"
+            console.error(
+                "Serial read error:",
+                error
             );
         }
 
@@ -998,10 +988,97 @@ async function startReading() {
 
 
 /* =========================================================
-   PARSOWANIE ODPOWIEDZI
+   PARSOWANIE ODPOWIEDZI ARDUINO
 ========================================================= */
 
 function parseSerialLine(line) {
+
+    /*
+        NAJWAŻNIEJSZE:
+
+        Arduino wysyła w trybie konfiguracji:
+
+        === TRYB KONFIGURACJI ===
+
+        To oznacza, że Button Box jest OK.
+    */
+
+    if (
+        line.includes(
+            "=== TRYB KONFIGURACJI ==="
+        )
+    ) {
+
+        configurationMode =
+            true;
+
+        setConfigurationMode(true);
+
+        setStatus(
+            "połączono — tryb konfiguracji",
+            "connected"
+        );
+
+        return;
+    }
+
+
+    /*
+        Dodatkowe warianty, jeśli kiedyś
+        zmienisz kod Arduino.
+    */
+
+    if (
+        line === "CONFIG=1" ||
+        line === "CONFIG_MODE=1" ||
+        line === "CONFIG OK"
+    ) {
+
+        configurationMode =
+            true;
+
+        setConfigurationMode(true);
+
+        setStatus(
+            "połączono — tryb konfiguracji",
+            "connected"
+        );
+
+        return;
+    }
+
+
+    /*
+        NORMALNY TRYB
+    */
+
+    if (
+        line.includes(
+            "GUROM-NORMAL-MODE"
+        )
+    ) {
+
+        configurationMode =
+            false;
+
+        setConfigurationMode(false);
+
+        setStatus(
+            "Button Box działa normalnie",
+            "warning"
+        );
+
+        configMessage.classList.add(
+            "show"
+        );
+
+        return;
+    }
+
+
+    /*
+        USTAWIENIA
+    */
 
     if (line.startsWith("LEFT_UP=")) {
 
@@ -1067,41 +1144,11 @@ function parseSerialLine(line) {
 
         return;
     }
-
-
-    if (
-        line === "CONFIG=1" ||
-        line === "CONFIG_MODE=1" ||
-        line === "CONFIG OK"
-    ) {
-
-        log(
-            "Button Box jest w trybie konfiguracji.",
-            "success"
-        );
-
-        return;
-    }
-
-
-    if (
-        line === "OK" ||
-        line === "SAVED" ||
-        line === "SAVE OK"
-    ) {
-
-        log(
-            "Button Box potwierdził operację.",
-            "success"
-        );
-
-        return;
-    }
 }
 
 
 /* =========================================================
-   USTAWIANIE POLA
+   USTAWIENIE POLA
 ========================================================= */
 
 function setField(id, value) {
@@ -1129,7 +1176,7 @@ async function sendCommand(command) {
     if (!port) {
 
         throw new Error(
-            "Brak połączenia z Button Box."
+            "Brak połączenia."
         );
     }
 
@@ -1137,7 +1184,7 @@ async function sendCommand(command) {
     if (!port.writable) {
 
         throw new Error(
-            "Port nie pozwala na zapis."
+            "Port nie jest gotowy do zapisu."
         );
     }
 
@@ -1150,12 +1197,6 @@ async function sendCommand(command) {
 
         const encoder =
             new TextEncoder();
-
-
-        log(
-            "TX: " + command,
-            "tx"
-        );
 
 
         await writer.write(
@@ -1179,49 +1220,49 @@ async function sendCommand(command) {
 async function refreshSettings() {
 
     if (!port) {
+        return;
+    }
+
+
+    if (!configurationMode) {
 
         alert(
-            "Najpierw połącz Button Box."
+            "Button Box nie jest w trybie konfiguracji."
         );
 
         return;
     }
 
 
+    refreshButton.disabled =
+        true;
+
+
     try {
 
-        refreshButton.disabled =
-            true;
-
-
-        log(
-            "Pobieranie ustawień...",
-            "tx"
+        await sendCommand(
+            "GET"
         );
-
-
-        await sendCommand("GET");
 
 
     } catch (error) {
 
-        log(
-            "BŁĄD GET: " +
-            error.message,
-            "error"
+        alert(
+            "Nie udało się odczytać ustawień.\n\n" +
+            error.message
         );
 
 
     } finally {
 
         refreshButton.disabled =
-            false;
+            !configurationMode;
     }
 }
 
 
 /* =========================================================
-   WALIDACJA USTAWIEŃ
+   WALIDACJA
 ========================================================= */
 
 function validateSettings() {
@@ -1232,11 +1273,9 @@ function validateSettings() {
             document.getElementById(id);
 
 
-        const value =
-            input.value.trim();
-
-
-        if (value.length === 0) {
+        if (
+            input.value.trim() === ""
+        ) {
 
             alert(
                 "Nie ustawiono wszystkich przycisków.\n\n" +
@@ -1254,7 +1293,7 @@ function validateSettings() {
 
 
 /* =========================================================
-   POLSKIE NAZWY
+   NAZWY
 ========================================================= */
 
 function getFieldName(id) {
@@ -1286,17 +1325,22 @@ function getFieldName(id) {
 
 async function saveSettings() {
 
-    if (saving) {
+    if (!port) {
         return;
     }
 
 
-    if (!port) {
+    if (!configurationMode) {
 
         alert(
-            "Najpierw połącz Button Box."
+            "Button Box nie jest w trybie konfiguracji."
         );
 
+        return;
+    }
+
+
+    if (saving) {
         return;
     }
 
@@ -1306,23 +1350,19 @@ async function saveSettings() {
     }
 
 
-    const confirmation =
+    const confirmed =
         confirm(
-            "Czy na pewno chcesz zapisać te ustawienia w Button Boxie?"
+            "Czy na pewno chcesz zapisać ustawienia?"
         );
 
 
-    if (!confirmation) {
-
-        log(
-            "Anulowano zapis."
-        );
-
+    if (!confirmed) {
         return;
     }
 
 
-    saving = true;
+    saving =
+        true;
 
     saveButton.disabled =
         true;
@@ -1330,17 +1370,10 @@ async function saveSettings() {
 
     try {
 
-        log(
-            "Rozpoczynam zapis...",
-            "tx"
-        );
-
-
         await sendCommand(
             "SET LEFT_UP=" +
             document.getElementById("leftUp").value.trim()
         );
-
 
         await delay(50);
 
@@ -1350,7 +1383,6 @@ async function saveSettings() {
             document.getElementById("leftDown").value.trim()
         );
 
-
         await delay(50);
 
 
@@ -1358,7 +1390,6 @@ async function saveSettings() {
             "SET RIGHT_UP=" +
             document.getElementById("rightUp").value.trim()
         );
-
 
         await delay(50);
 
@@ -1368,7 +1399,6 @@ async function saveSettings() {
             document.getElementById("rightDown").value.trim()
         );
 
-
         await delay(50);
 
 
@@ -1376,7 +1406,6 @@ async function saveSettings() {
             "SET MID=" +
             document.getElementById("mid").value.trim()
         );
-
 
         await delay(50);
 
@@ -1386,16 +1415,11 @@ async function saveSettings() {
             document.getElementById("czuwak").value.trim()
         );
 
-
         await delay(100);
 
 
-        await sendCommand("SAVE");
-
-
-        log(
-            "Ustawienia zostały wysłane do Button Boxa.",
-            "success"
+        await sendCommand(
+            "SAVE"
         );
 
 
@@ -1406,25 +1430,19 @@ async function saveSettings() {
 
     } catch (error) {
 
-        log(
-            "BŁĄD ZAPISU: " +
-            error.message,
-            "error"
-        );
-
-
         alert(
-            "Nie udało się zapisać ustawień.\n\n" +
+            "Błąd podczas zapisywania.\n\n" +
             error.message
         );
 
 
     } finally {
 
-        saving = false;
+        saving =
+            false;
 
         saveButton.disabled =
-            !port;
+            !configurationMode;
     }
 }
 
@@ -1435,15 +1453,10 @@ async function saveSettings() {
 
 function startKeyCapture(button) {
 
-    if (!port) {
+    if (!configurationMode) {
         return;
     }
 
-
-    /*
-        Jeśli wcześniej trwało wybieranie klawisza,
-        anulujemy je.
-    */
 
     cancelKeyCapture();
 
@@ -1464,7 +1477,6 @@ function startKeyCapture(button) {
         function(event) {
 
             event.preventDefault();
-
             event.stopPropagation();
 
 
@@ -1472,25 +1484,13 @@ function startKeyCapture(button) {
                 event.key;
 
 
-            /*
-                Specjalne nazwy klawiszy.
-            */
-
             if (key === " ") {
                 key = "Space";
             }
 
 
-            if (key === "Escape") {
-
-                input.value =
-                    "Escape";
-
-            } else {
-
-                input.value =
-                    key;
-            }
+            input.value =
+                key;
 
 
             button.textContent =
@@ -1512,7 +1512,6 @@ function startKeyCapture(button) {
             captureHandler =
                 null;
 
-
             captureButton =
                 null;
         };
@@ -1520,6 +1519,7 @@ function startKeyCapture(button) {
 
     button.textContent =
         "NACIŚNIJ KLAWISZ";
+
 
     button.classList.add(
         "waiting"
@@ -1531,17 +1531,11 @@ function startKeyCapture(button) {
         captureHandler,
         true
     );
-
-
-    log(
-        "Wybieranie klawisza: " +
-        getFieldName(field)
-    );
 }
 
 
 /* =========================================================
-   ANULOWANIE WYBORU KLAWISZA
+   ANULOWANIE WYBORU
 ========================================================= */
 
 function cancelKeyCapture() {
@@ -1575,34 +1569,22 @@ function cancelKeyCapture() {
 
 
 /* =========================================================
-   ROZŁĄCZANIE
+   CZYSZCZENIE POŁĄCZENIA
 ========================================================= */
 
-async function disconnectButtonBox() {
-
-    log(
-        "Rozłączanie..."
-    );
-
-
-    cancelKeyCapture();
-
+async function cleanupConnection() {
 
     keepReading =
         false;
 
 
-    /*
-        Najpierw zatrzymujemy reader,
-        żeby port można było zamknąć.
-    */
+    cancelKeyCapture();
+
 
     if (reader) {
 
         try {
-
             await reader.cancel();
-
         } catch (e) {}
 
     }
@@ -1614,17 +1596,9 @@ async function disconnectButtonBox() {
     if (port) {
 
         try {
-
             await port.close();
+        } catch (e) {}
 
-        } catch (error) {
-
-            log(
-                "Błąd zamykania portu: " +
-                error.message,
-                "error"
-            );
-        }
     }
 
 
@@ -1634,13 +1608,11 @@ async function disconnectButtonBox() {
     port =
         null;
 
+    configurationMode =
+        false;
 
-    setConnectedState(false);
 
-
-    setStatus(
-        "niepołączono"
-    );
+    setConfigurationMode(false);
 
 
     connectButton.textContent =
@@ -1649,17 +1621,46 @@ async function disconnectButtonBox() {
     connectButton.classList.remove(
         "connected"
     );
+}
 
 
-    log(
-        "Button Box rozłączony.",
-        "success"
+/* =========================================================
+   ROZŁĄCZANIE
+========================================================= */
+
+async function disconnectButtonBox() {
+
+    await cleanupConnection();
+
+
+    setStatus(
+        "niepołączono"
+    );
+
+
+    configMessage.classList.remove(
+        "show"
     );
 }
 
 
 /* =========================================================
-   ZDARZENIA
+   OPÓŹNIENIE
+========================================================= */
+
+function delay(ms) {
+
+    return new Promise(
+        resolve => setTimeout(
+            resolve,
+            ms
+        )
+    );
+}
+
+
+/* =========================================================
+   PRZYCISKI
 ========================================================= */
 
 connectButton.addEventListener(
@@ -1688,7 +1689,9 @@ document
             "click",
             function() {
 
-                startKeyCapture(this);
+                startKeyCapture(
+                    this
+                );
 
             }
         );
@@ -1696,53 +1699,37 @@ document
     });
 
 
-/*
-    Jeśli użytkownik odłączy kabel albo urządzenie
-    zniknie z systemu.
-*/
+/* =========================================================
+   ODŁĄCZENIE USB
+========================================================= */
 
 if ("serial" in navigator) {
 
     navigator.serial.addEventListener(
         "disconnect",
-        function(event) {
+        async function(event) {
 
             if (
                 port &&
                 event.target === port
             ) {
 
-                log(
-                    "Button Box został odłączony.",
-                    "error"
-                );
+                await cleanupConnection();
 
-
-                port = null;
-
-                keepReading =
-                    false;
-
-                setConnectedState(
-                    false
-                );
 
                 setStatus(
                     "Button Box odłączony",
                     "error"
                 );
 
-                connectButton.textContent =
-                    "POŁĄCZ Z BUTTON BOX";
 
-                connectButton.classList.remove(
-                    "connected"
+                configMessage.classList.add(
+                    "show"
                 );
             }
 
         }
     );
-
 }
 
 
@@ -1750,29 +1737,11 @@ if ("serial" in navigator) {
    START
 ========================================================= */
 
-log(
-    "Konfigurator uruchomiony.",
-    "success"
+setConfigurationMode(false);
+
+setStatus(
+    "niepołączono"
 );
-
-
-if ("serial" in navigator) {
-
-    log(
-        "Web Serial: OK",
-        "success"
-    );
-
-} else {
-
-    log(
-        "Web Serial: BRAK",
-        "error"
-    );
-}
-
-
-setConnectedState(false);
 
 </script>
 
