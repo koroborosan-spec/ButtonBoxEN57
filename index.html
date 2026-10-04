@@ -1,0 +1,619 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ButtonBoxEN57 Configurator</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:#0b0d10;
+color:#fff;
+min-height:100vh
+}
+
+.container{
+width:min(760px,calc(100% - 30px));
+margin:0 auto;
+padding:35px 0 50px
+}
+
+.header{
+text-align:center;
+margin-bottom:28px
+}
+
+.logo{
+font-size:38px;
+font-weight:800;
+letter-spacing:3px
+}
+
+.subtitle{
+color:#8d939c;
+margin-top:7px;
+font-size:15px
+}
+
+.status{
+display:flex;
+align-items:center;
+gap:10px;
+background:#15181d;
+border:1px solid #292e36;
+border-radius:14px;
+padding:14px 17px;
+margin-bottom:14px;
+color:#c8ccd2
+}
+
+.status-dot{
+width:10px;
+height:10px;
+border-radius:50%;
+background:#777
+}
+
+.connect{
+width:100%;
+padding:15px;
+border:0;
+border-radius:13px;
+background:#fff;
+color:#111;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+transition:.2s
+}
+
+.connect:hover{
+background:#ddd;
+transform:translateY(-1px)
+}
+
+.section-title{
+font-size:13px;
+text-transform:uppercase;
+letter-spacing:1.5px;
+color:#777e88;
+margin:30px 4px 12px
+}
+
+.card{
+background:#15181d;
+border:1px solid #292e36;
+border-radius:17px;
+padding:17px;
+margin:10px 0;
+transition:.2s
+}
+
+.card:hover{
+border-color:#444b55
+}
+
+.card-top{
+display:flex;
+align-items:center;
+gap:13px;
+margin-bottom:13px
+}
+
+.icon{
+width:42px;
+height:42px;
+border-radius:12px;
+background:#20242b;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:21px
+}
+
+.name{
+font-size:16px;
+font-weight:700
+}
+
+.desc{
+font-size:12px;
+color:#777e88;
+margin-top:3px
+}
+
+.row{
+display:flex;
+gap:9px
+}
+
+input{
+flex:1;
+min-width:0;
+background:#0d0f12;
+border:1px solid #303640;
+color:#fff;
+border-radius:10px;
+padding:12px 13px;
+font-size:15px;
+outline:none
+}
+
+input:focus{
+border-color:#777
+}
+
+.capture{
+background:#242931;
+color:#fff;
+border:1px solid #363c45;
+border-radius:10px;
+padding:0 14px;
+font-size:13px;
+font-weight:600;
+cursor:pointer;
+white-space:nowrap
+}
+
+.capture:hover{
+background:#303640
+}
+
+.save{
+width:100%;
+margin-top:18px;
+padding:15px;
+border:0;
+border-radius:13px;
+background:#fff;
+color:#111;
+font-size:16px;
+font-weight:700;
+cursor:pointer
+}
+
+.save:hover{
+background:#ddd
+}
+
+.info{
+margin-top:18px;
+text-align:center;
+color:#626975;
+font-size:12px
+}
+
+@media(max-width:600px){
+
+.container{
+width:calc(100% - 20px);
+padding-top:25px
+}
+
+.logo{
+font-size:31px
+}
+
+.row{
+flex-direction:column
+}
+
+.capture{
+padding:12px
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<div class="logo">ButtonBoxEN57</div>
+<div class="subtitle">Button Box Configurator</div>
+</div>
+
+<div class="status">
+<span class="status-dot" id="statusDot"></span>
+<span id="status">Niepołączono z Button Box</span>
+</div>
+
+<button class="connect" onclick="connect()">
+🔌 Połącz z Button Box
+</button>
+
+<div class="section-title">
+Konfiguracja przycisków
+</div>
+
+<div id="settings">
+
+<div class="card">
+<div class="card-top">
+<div class="icon">◀️</div>
+<div>
+<div class="name">Lewy — do góry</div>
+<div class="desc">Funkcja przy ruchu do góry</div>
+</div>
+</div>
+
+<div class="row">
+<input id="leftUp" value="I">
+<button class="capture" onclick="capture('leftUp')">
+⌨️ Naciśnij klawisz
+</button>
+</div>
+</div>
+
+
+<div class="card">
+<div class="card-top">
+<div class="icon">🔽</div>
+<div>
+<div class="name">Lewy — w dół</div>
+<div class="desc">Funkcja przy ruchu w dół</div>
+</div>
+</div>
+
+<div class="row">
+<input id="leftDown" value="O">
+<button class="capture" onclick="capture('leftDown')">
+⌨️ Naciśnij klawisz
+</button>
+</div>
+</div>
+
+
+<div class="card">
+<div class="card-top">
+<div class="icon">▶️</div>
+<div>
+<div class="name">Prawy — do góry</div>
+<div class="desc">Funkcja przy ruchu do góry</div>
+</div>
+</div>
+
+<div class="row">
+<input id="rightUp" value="P">
+<button class="capture" onclick="capture('rightUp')">
+⌨️ Naciśnij klawisz
+</button>
+</div>
+</div>
+
+
+<div class="card">
+<div class="card-top">
+<div class="icon">🔽</div>
+<div>
+<div class="name">Prawy — w dół</div>
+<div class="desc">Funkcja przy ruchu w dół</div>
+</div>
+</div>
+
+<div class="row">
+<input id="rightDown" value="O">
+<button class="capture" onclick="capture('rightDown')">
+⌨️ Naciśnij klawisz
+</button>
+</div>
+</div>
+
+
+<div class="card">
+<div class="card-top">
+<div class="icon">⏺️</div>
+<div>
+<div class="name">Środkowy</div>
+<div class="desc">Przycisk środkowy</div>
+</div>
+</div>
+
+<div class="row">
+<input id="mid" value="BACKSPACE">
+<button class="capture" onclick="capture('mid')">
+⌨️ Naciśnij klawisz
+</button>
+</div>
+</div>
+
+
+<div class="card">
+<div class="card-top">
+<div class="icon">⚠️</div>
+<div>
+<div class="name">Czuwak</div>
+<div class="desc">Przycisk czuwaka</div>
+</div>
+</div>
+
+<div class="row">
+<input id="czuwak" value="SPACE">
+<button class="capture" onclick="capture('czuwak')">
+⌨️ Naciśnij klawisz
+</button>
+</div>
+</div>
+
+
+<button class="save" onclick="saveSettings()">
+💾 Zapisz ustawienia
+</button>
+
+</div>
+
+<div class="info">
+ButtonBoxEN57 • Button Box Configuration
+</div>
+
+</div>
+
+
+<script>
+
+let port=null;
+let reader=null;
+let buffer="";
+let capturing=null;
+
+
+async function connect(){
+
+try{
+
+port=await navigator.serial.requestPort();
+
+await port.open({baudRate:115200});
+
+document.getElementById("status").textContent=
+"Połączono z Button Box";
+
+document.getElementById("statusDot").style.background=
+"#4caf50";
+
+reader=port.readable.getReader();
+
+readSerial();
+
+await send("GET");
+
+}catch(e){
+
+document.getElementById("status").textContent=
+"Błąd połączenia: "+e;
+
+document.getElementById("statusDot").style.background=
+"#e53935";
+
+}
+
+}
+
+
+async function readSerial(){
+
+while(port&&port.readable){
+
+try{
+
+const {value,done}=await reader.read();
+
+if(done)break;
+
+if(value){
+
+buffer+=new TextDecoder().decode(value);
+
+let lines=buffer.split("\n");
+
+buffer=lines.pop();
+
+lines.forEach(line=>handleLine(line.trim()));
+
+}
+
+}catch(e){
+
+break;
+
+}
+
+}
+
+}
+
+
+function handleLine(line){
+
+if(!line)return;
+
+if(line.startsWith("LEFT_UP="))
+document.getElementById("leftUp").value=
+line.substring(9);
+
+else if(line.startsWith("LEFT_DOWN="))
+document.getElementById("leftDown").value=
+line.substring(11);
+
+else if(line.startsWith("RIGHT_UP="))
+document.getElementById("rightUp").value=
+line.substring(10);
+
+else if(line.startsWith("RIGHT_DOWN="))
+document.getElementById("rightDown").value=
+line.substring(12);
+
+else if(line.startsWith("MID="))
+document.getElementById("mid").value=
+line.substring(4);
+
+else if(line.startsWith("CZUWAK="))
+document.getElementById("czuwak").value=
+line.substring(7);
+
+}
+
+
+async function send(command){
+
+if(!port||!port.writable)return;
+
+const writer=port.writable.getWriter();
+
+await writer.write(
+new TextEncoder().encode(command+"\n")
+);
+
+writer.releaseLock();
+
+}
+
+
+async function saveSettings(){
+
+await send(
+"SET LEFT_UP "+
+document.getElementById("leftUp").value
+);
+
+await send(
+"SET LEFT_DOWN "+
+document.getElementById("leftDown").value
+);
+
+await send(
+"SET RIGHT_UP "+
+document.getElementById("rightUp").value
+);
+
+await send(
+"SET RIGHT_DOWN "+
+document.getElementById("rightDown").value
+);
+
+await send(
+"SET MID "+
+document.getElementById("mid").value
+);
+
+await send(
+"SET CZUWAK "+
+document.getElementById("czuwak").value
+);
+
+document.getElementById("status").textContent=
+"Ustawienia zapisane";
+
+}
+
+
+function keyName(e){
+
+let key=e.key;
+
+if(key===" ")
+return"SPACE";
+
+const special={
+
+Backspace:"BACKSPACE",
+Enter:"ENTER",
+Tab:"TAB",
+Escape:"ESC",
+ArrowUp:"UP",
+ArrowDown:"DOWN",
+ArrowLeft:"LEFT",
+ArrowRight:"RIGHT",
+Delete:"DELETE",
+Home:"HOME",
+End:"END",
+PageUp:"PAGEUP",
+PageDown:"PAGEDOWN"
+
+};
+
+if(special[key])
+return special[key];
+
+if(/^F([1-9]|1[0-2])$/.test(key))
+return key;
+
+if(key.length===1)
+return key.toUpperCase();
+
+return null;
+
+}
+
+
+function capture(id){
+
+capturing=id;
+
+document.getElementById(id).value=
+"Naciśnij...";
+
+document.getElementById("status").textContent=
+"Naciśnij kombinację dla: "+id;
+
+}
+
+
+document.addEventListener("keydown",e=>{
+
+if(!capturing)return;
+
+e.preventDefault();
+e.stopPropagation();
+
+if(
+["Control","Shift","Alt","Meta"].includes(e.key)
+)return;
+
+let keys=[];
+
+if(e.ctrlKey)
+keys.push("CTRL");
+
+if(e.shiftKey)
+keys.push("SHIFT");
+
+if(e.altKey)
+keys.push("ALT");
+
+if(e.metaKey)
+keys.push("GUI");
+
+const main=keyName(e);
+
+if(main)
+keys.push(main);
+
+if(keys.length){
+
+document.getElementById(capturing).value=
+keys.join("+");
+
+capturing=null;
+
+document.getElementById("status").textContent=
+"Kombinacja ustawiona";
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
+```
+
+Teraz **pierwsza rzecz w pliku to `<!DOCTYPE html>`**, więc nie powinien pojawić się żaden samotny napis `html`.
