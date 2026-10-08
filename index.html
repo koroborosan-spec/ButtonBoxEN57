@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -165,6 +166,9 @@
 
         .capture.waiting {
             background: #d97706;
+            font-size: 9px;
+            padding-left: 6px;
+            padding-right: 6px;
         }
 
         .bottom-buttons {
@@ -261,6 +265,7 @@
             .bottom-buttons {
                 flex-direction: column;
             }
+
         }
 
     </style>
@@ -530,7 +535,11 @@ let saving = false;
 let configurationMode = false;
 
 let captureHandler = null;
+let captureKeyUpHandler = null;
 let captureButton = null;
+
+let captureModifiers = [];
+let captureUsedCombination = false;
 
 
 /* =========================================================
@@ -706,17 +715,9 @@ async function connectButtonBox() {
 
     try {
 
-        /*
-            WYBÓR URZĄDZENIA
-        */
-
         port =
             await navigator.serial.requestPort();
 
-
-        /*
-            OTWIERANIE PORTU
-        */
 
         setStatus(
             "sprawdzanie trybu konfiguracji...",
@@ -737,44 +738,22 @@ async function connectButtonBox() {
         );
 
 
-        /*
-            NAJPIERW WŁĄCZAMY ODCZYT.
-        */
-
         keepReading =
             true;
 
         startReading();
 
 
-        /*
-            Dajemy Arduino czas na start.
-        */
+        await delay(1000);
 
-        await delay(700);
-
-
-        /*
-            Wysyłamy GET.
-        */
 
         await sendCommand(
             "GET"
         );
 
 
-        /*
-            Czekamy na odpowiedź.
-        */
-
         await delay(1500);
 
-
-        /*
-            JEŻELI DOSTALIŚMY USTAWIENIE
-            LUB KOMUNIKAT CONFIG,
-            TO JEST TRYB KONFIGURACJI.
-        */
 
         if (configurationMode) {
 
@@ -786,11 +765,6 @@ async function connectButtonBox() {
             return;
         }
 
-
-        /*
-            NIE OTRZYMALIŚMY NIC,
-            CO POTWIERDZA KONFIGURACJĘ.
-        */
 
         setStatus(
             "Button Box nie jest w trybie konfiguracji",
@@ -952,10 +926,11 @@ async function startReading() {
 
 function parseSerialLine(line) {
 
-    /*
-        Wariant 1:
-        jawny komunikat konfiguracji
-    */
+    console.log(
+        "Arduino:",
+        line
+    );
+
 
     if (
         line.includes(
@@ -977,11 +952,6 @@ function parseSerialLine(line) {
     }
 
 
-    /*
-        Wariant 2:
-        Arduino może wysłać CONFIG=1
-    */
-
     if (
         line === "CONFIG=1" ||
         line === "CONFIG_MODE=1" ||
@@ -1001,14 +971,6 @@ function parseSerialLine(line) {
         return;
     }
 
-
-    /*
-        Jeśli dostaniemy JAKIEKOLWIEK
-        ustawienie konfiguracyjne,
-        uznajemy Button Box za tryb konfiguracji.
-
-        To jest najważniejsza zmiana.
-    */
 
     if (line.startsWith("LEFT_UP=")) {
 
@@ -1136,10 +1098,6 @@ function parseSerialLine(line) {
     }
 
 
-    /*
-        Normalny tryb.
-    */
-
     if (
         line.includes(
             "GUROM-NORMAL-MODE"
@@ -1263,6 +1221,9 @@ async function refreshSettings() {
         );
 
 
+        await delay(500);
+
+
     } catch (error) {
 
         alert(
@@ -1379,60 +1340,77 @@ async function saveSettings() {
     saveButton.disabled =
         true;
 
+    refreshButton.disabled =
+        true;
+
 
     try {
 
+        /*
+           Każde ustawienie wysyłamy osobno.
+           Arduino zapisuje każde SET bezpośrednio
+           do EEPROM.
+        */
+
         await sendCommand(
-            "SET LEFT_UP=" +
+            "SET LEFT_UP " +
             document.getElementById("leftUp").value.trim()
         );
 
-        await delay(50);
+        await delay(250);
 
 
         await sendCommand(
-            "SET LEFT_DOWN=" +
+            "SET LEFT_DOWN " +
             document.getElementById("leftDown").value.trim()
         );
 
-        await delay(50);
+        await delay(250);
 
 
         await sendCommand(
-            "SET RIGHT_UP=" +
+            "SET RIGHT_UP " +
             document.getElementById("rightUp").value.trim()
         );
 
-        await delay(50);
+        await delay(250);
 
 
         await sendCommand(
-            "SET RIGHT_DOWN=" +
+            "SET RIGHT_DOWN " +
             document.getElementById("rightDown").value.trim()
         );
 
-        await delay(50);
+        await delay(250);
 
 
         await sendCommand(
-            "SET MID=" +
+            "SET MID " +
             document.getElementById("mid").value.trim()
         );
 
-        await delay(50);
+        await delay(250);
 
 
         await sendCommand(
-            "SET CZUWAK=" +
+            "SET CZUWAK " +
             document.getElementById("czuwak").value.trim()
         );
 
-        await delay(100);
+        await delay(500);
 
+
+        /*
+           Teraz prosimy Arduino o ponowny odczyt EEPROM.
+           Dzięki temu widzimy, czy wartości rzeczywiście
+           zostały zapisane.
+        */
 
         await sendCommand(
-            "SAVE"
+            "GET"
         );
+
+        await delay(1000);
 
 
         alert(
@@ -1441,6 +1419,8 @@ async function saveSettings() {
 
 
     } catch (error) {
+
+        console.error(error);
 
         alert(
             "Błąd podczas zapisywania.\n\n" +
@@ -1454,6 +1434,9 @@ async function saveSettings() {
             false;
 
         saveButton.disabled =
+            !configurationMode;
+
+        refreshButton.disabled =
             !configurationMode;
     }
 }
@@ -1484,6 +1467,12 @@ function startKeyCapture(button) {
     captureButton =
         button;
 
+    captureModifiers =
+        [];
+
+    captureUsedCombination =
+        false;
+
 
     captureHandler =
         function(event) {
@@ -1492,39 +1481,154 @@ function startKeyCapture(button) {
             event.stopPropagation();
 
 
-            let key =
-                event.key;
+            if (event.key === "Control") {
 
+                if (
+                    !captureModifiers.includes("CTRL")
+                ) {
 
-            if (key === " ") {
-                key = "Space";
+                    captureModifiers.push("CTRL");
+                }
+
+                return;
             }
 
 
-            input.value =
-                key;
+            if (event.key === "Shift") {
+
+                if (
+                    !captureModifiers.includes("SHIFT")
+                ) {
+
+                    captureModifiers.push("SHIFT");
+                }
+
+                return;
+            }
 
 
-            button.textContent =
-                "Wybierz";
+            if (event.key === "Alt") {
 
-            button.classList.remove(
-                "waiting"
+                if (
+                    !captureModifiers.includes("ALT")
+                ) {
+
+                    captureModifiers.push("ALT");
+                }
+
+                return;
+            }
+
+
+            if (event.key === "Meta") {
+
+                if (
+                    !captureModifiers.includes("GUI")
+                ) {
+
+                    captureModifiers.push("GUI");
+                }
+
+                return;
+            }
+
+
+            const key =
+                convertKey(event);
+
+
+            if (!key) {
+                return;
+            }
+
+
+            let keys =
+                [...captureModifiers];
+
+
+            keys.push(key);
+
+
+            if (keys.length > 4) {
+
+                alert(
+                    "Maksymalnie można ustawić 4 klawisze."
+                );
+
+                cancelKeyCapture();
+
+                return;
+            }
+
+
+            if (captureModifiers.length > 0) {
+
+                captureUsedCombination =
+                    true;
+            }
+
+
+            finishKeyCapture(
+                input,
+                button,
+                keys
             );
+        };
 
 
-            document.removeEventListener(
-                "keydown",
-                captureHandler,
-                true
-            );
+    captureKeyUpHandler =
+        function(event) {
+
+            event.preventDefault();
+            event.stopPropagation();
 
 
-            captureHandler =
-                null;
+            let modifier = null;
 
-            captureButton =
-                null;
+
+            if (event.key === "Control") {
+                modifier = "CTRL";
+            }
+
+            else if (event.key === "Shift") {
+                modifier = "SHIFT";
+            }
+
+            else if (event.key === "Alt") {
+                modifier = "ALT";
+            }
+
+            else if (event.key === "Meta") {
+                modifier = "GUI";
+            }
+
+
+            if (!modifier) {
+                return;
+            }
+
+
+            if (captureUsedCombination) {
+                return;
+            }
+
+
+            captureModifiers =
+                captureModifiers.filter(
+                    key => key !== modifier
+                );
+
+
+            if (
+                captureModifiers.length === 0
+            ) {
+
+                finishKeyCapture(
+                    input,
+                    button,
+                    [modifier]
+                );
+            }
         };
 
 
@@ -1541,6 +1645,174 @@ function startKeyCapture(button) {
         captureHandler,
         true
     );
+
+
+    document.addEventListener(
+        "keyup",
+        captureKeyUpHandler,
+        true
+    );
+}
+
+
+/* =========================================================
+   ZAKOŃCZENIE WYBORU
+========================================================= */
+
+function finishKeyCapture(
+    input,
+    button,
+    keys
+) {
+
+    input.value =
+        keys.join("+");
+
+
+    button.textContent =
+        "Wybierz";
+
+    button.classList.remove(
+        "waiting"
+    );
+
+
+    document.removeEventListener(
+        "keydown",
+        captureHandler,
+        true
+    );
+
+
+    document.removeEventListener(
+        "keyup",
+        captureKeyUpHandler,
+        true
+    );
+
+
+    captureHandler =
+        null;
+
+    captureKeyUpHandler =
+        null;
+
+    captureButton =
+        null;
+
+    captureModifiers =
+        [];
+
+    captureUsedCombination =
+        false;
+}
+
+
+/* =========================================================
+   KONWERSJA KLAWISZA
+========================================================= */
+
+function convertKey(event) {
+
+    const key =
+        event.key;
+
+
+    if (
+        key === "Control" ||
+        key === "Shift" ||
+        key === "Alt" ||
+        key === "Meta"
+    ) {
+        return null;
+    }
+
+
+    if (key === " ") {
+        return "SPACE";
+    }
+
+
+    if (key === "Enter") {
+        return "ENTER";
+    }
+
+
+    if (key === "Backspace") {
+        return "BACKSPACE";
+    }
+
+
+    if (key === "Tab") {
+        return "TAB";
+    }
+
+
+    if (key === "Escape") {
+        return "ESC";
+    }
+
+
+    if (key === "Delete") {
+        return "DELETE";
+    }
+
+
+    if (key === "Home") {
+        return "HOME";
+    }
+
+
+    if (key === "End") {
+        return "END";
+    }
+
+
+    if (key === "PageUp") {
+        return "PAGEUP";
+    }
+
+
+    if (key === "PageDown") {
+        return "PAGEDOWN";
+    }
+
+
+    if (key === "ArrowUp") {
+        return "UP";
+    }
+
+
+    if (key === "ArrowDown") {
+        return "DOWN";
+    }
+
+
+    if (key === "ArrowLeft") {
+        return "LEFT";
+    }
+
+
+    if (key === "ArrowRight") {
+        return "RIGHT";
+    }
+
+
+    if (
+        /^F([1-9]|1[0-2])$/.test(key)
+    ) {
+
+        return key.toUpperCase();
+    }
+
+
+    if (key.length === 1) {
+
+        return key.toUpperCase();
+    }
+
+
+    return key.toUpperCase();
 }
 
 
@@ -1563,6 +1835,19 @@ function cancelKeyCapture() {
     }
 
 
+    if (captureKeyUpHandler) {
+
+        document.removeEventListener(
+            "keyup",
+            captureKeyUpHandler,
+            true
+        );
+
+        captureKeyUpHandler =
+            null;
+    }
+
+
     if (captureButton) {
 
         captureButton.textContent =
@@ -1575,6 +1860,13 @@ function cancelKeyCapture() {
         captureButton =
             null;
     }
+
+
+    captureModifiers =
+        [];
+
+    captureUsedCombination =
+        false;
 }
 
 
@@ -1600,7 +1892,7 @@ async function cleanupConnection() {
     }
 
 
-    await delay(50);
+    await delay(100);
 
 
     if (port) {
