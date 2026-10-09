@@ -8,7 +8,6 @@
     <title>Button Box EN57 - Konfigurator</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
@@ -138,6 +137,14 @@
             font-weight: bold;
         }
 
+        /* Większe i wyraźniejsze nazwy drzwi */
+        .setting.door-setting label {
+            font-size: 19px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.35;
+        }
+
         .row {
             display: flex;
             gap: 8px;
@@ -244,7 +251,6 @@
         }
 
         @media (max-width: 650px) {
-
             .container {
                 width: 95%;
                 margin: 20px auto;
@@ -265,9 +271,7 @@
             .bottom-buttons {
                 flex-direction: column;
             }
-
         }
-
     </style>
 </head>
 
@@ -281,7 +285,6 @@
         Konfigurator przycisków
     </div>
 
-
     <div class="panel">
 
         <button id="connectButton">
@@ -291,7 +294,6 @@
         <div id="status">
             Status: niepołączono
         </div>
-
 
         <div id="configMessage" class="config-message">
 
@@ -303,15 +305,14 @@
 
             <ol>
                 <li>Odłącz Button Box od USB.</li>
-                <li>Przytrzymaj jednocześnie <b>CZUWAK</b> i <b>ŚRODKOWY</b>.</li>
-                <li>Trzymając oba przyciski, podłącz Button Box do USB.</li>
-                <li>Poczekaj chwilę, cały czas trzymając oba przyciski.</li>
-                <li>Puść przyciski.</li>
+                <li>Przytrzymaj przycisk <b>CZUWAK</b>.</li>
+                <li>Cały czas trzymając CZUWAK, podłącz Button Box do USB.</li>
+                <li>Trzymaj CZUWAK przez co najmniej 3 sekundy od podłączenia USB.</li>
+                <li>Puść przycisk CZUWAK.</li>
                 <li>Kliknij ponownie „Połącz z Button Box”.</li>
             </ol>
 
         </div>
-
 
         <div id="successMessage" class="success-message">
             Button Box jest w trybie konfiguracji.
@@ -319,22 +320,19 @@
 
     </div>
 
-
     <div class="panel">
 
         <h2>Ustawienia przycisków</h2>
 
         <div class="settings">
 
-
-            <div class="setting">
+            <div class="setting door-setting">
 
                 <label for="leftUp">
-                    Lewo góra
+                    LEWE DRZWI — GÓRA
                 </label>
 
                 <div class="row">
-
                     <input
                         id="leftUp"
                         type="text"
@@ -350,20 +348,17 @@
                     >
                         Wybierz
                     </button>
-
                 </div>
 
             </div>
 
-
-            <div class="setting">
+            <div class="setting door-setting">
 
                 <label for="leftDown">
-                    Lewo dół
+                    LEWE DRZWI — DÓŁ
                 </label>
 
                 <div class="row">
-
                     <input
                         id="leftDown"
                         type="text"
@@ -379,20 +374,17 @@
                     >
                         Wybierz
                     </button>
-
                 </div>
 
             </div>
 
-
-            <div class="setting">
+            <div class="setting door-setting">
 
                 <label for="rightUp">
-                    Prawo góra
+                    PRAWE DRZWI — GÓRA
                 </label>
 
                 <div class="row">
-
                     <input
                         id="rightUp"
                         type="text"
@@ -408,20 +400,17 @@
                     >
                         Wybierz
                     </button>
-
                 </div>
 
             </div>
 
-
-            <div class="setting">
+            <div class="setting door-setting">
 
                 <label for="rightDown">
-                    Prawo dół
+                    PRAWE DRZWI — DÓŁ
                 </label>
 
                 <div class="row">
-
                     <input
                         id="rightDown"
                         type="text"
@@ -437,11 +426,9 @@
                     >
                         Wybierz
                     </button>
-
                 </div>
 
             </div>
-
 
             <div class="setting">
 
@@ -450,7 +437,6 @@
                 </label>
 
                 <div class="row">
-
                     <input
                         id="mid"
                         type="text"
@@ -466,11 +452,9 @@
                     >
                         Wybierz
                     </button>
-
                 </div>
 
             </div>
-
 
             <div class="setting">
 
@@ -479,7 +463,6 @@
                 </label>
 
                 <div class="row">
-
                     <input
                         id="czuwak"
                         type="text"
@@ -495,13 +478,11 @@
                     >
                         Wybierz
                     </button>
-
                 </div>
 
             </div>
 
         </div>
-
 
         <div class="bottom-buttons">
 
@@ -519,11 +500,9 @@
 
 </div>
 
-
 <script>
 
 "use strict";
-
 
 let port = null;
 let reader = null;
@@ -540,7 +519,6 @@ let captureButton = null;
 
 let captureModifiers = [];
 let captureUsedCombination = false;
-
 
 /* =========================================================
    ELEMENTY
@@ -564,7 +542,6 @@ const saveButton =
 const refreshButton =
     document.getElementById("refreshButton");
 
-
 const fieldNames = [
     "leftUp",
     "leftDown",
@@ -574,16 +551,12 @@ const fieldNames = [
     "czuwak"
 ];
 
-
 /* =========================================================
    STATUS
 ========================================================= */
 
 function setStatus(text, type = "") {
-
-    statusBox.textContent =
-        "Status: " + text;
-
+    statusBox.textContent = "Status: " + text;
     statusBox.className = "";
 
     if (type) {
@@ -591,69 +564,38 @@ function setStatus(text, type = "") {
     }
 }
 
-
 /* =========================================================
    TRYB KONFIGURACJI
 ========================================================= */
 
 function setConfigurationMode(enabled) {
+    configurationMode = enabled;
 
-    configurationMode =
-        enabled;
-
-
-    document
-        .querySelectorAll(".capture")
-        .forEach(button => {
-
-            button.disabled =
-                !enabled;
-
-        });
-
-
-    fieldNames.forEach(id => {
-
-        document.getElementById(id).disabled =
-            !enabled;
-
+    document.querySelectorAll(".capture").forEach(button => {
+        button.disabled = !enabled;
     });
 
+    fieldNames.forEach(id => {
+        document.getElementById(id).disabled = !enabled;
+    });
 
-    saveButton.disabled =
-        !enabled;
-
-    refreshButton.disabled =
-        !enabled;
-
+    saveButton.disabled = !enabled;
+    refreshButton.disabled = !enabled;
 
     if (enabled) {
-
-        configMessage.classList.remove(
-            "show"
-        );
-
-        successMessage.classList.add(
-            "show"
-        );
-
+        configMessage.classList.remove("show");
+        successMessage.classList.add("show");
     } else {
-
-        successMessage.classList.remove(
-            "show"
-        );
+        successMessage.classList.remove("show");
     }
 }
-
 
 /* =========================================================
    WEB SERIAL
 ========================================================= */
 
 function checkWebSerial() {
-
     if (!("serial" in navigator)) {
-
         alert(
             "Ta przeglądarka nie obsługuje Web Serial.\n\n" +
             "Użyj aktualnego Google Chrome albo Microsoft Edge."
@@ -665,98 +607,61 @@ function checkWebSerial() {
     return true;
 }
 
-
 /* =========================================================
    POŁĄCZENIE
 ========================================================= */
 
 async function connectButtonBox() {
-
     if (connecting) {
         return;
     }
 
-
     if (port) {
-
         await disconnectButtonBox();
-
         return;
     }
-
 
     if (!checkWebSerial()) {
         return;
     }
 
-
     connecting = true;
+    connectButton.disabled = true;
 
-    connectButton.disabled =
-        true;
-
-
-    configurationMode =
-        false;
-
+    configurationMode = false;
     setConfigurationMode(false);
 
+    configMessage.classList.remove("show");
 
-    configMessage.classList.remove(
-        "show"
-    );
-
-
-    setStatus(
-        "wybierz Button Box...",
-        "checking"
-    );
-
+    setStatus("wybierz Button Box...", "checking");
 
     try {
-
-        port =
-            await navigator.serial.requestPort();
-
+        port = await navigator.serial.requestPort();
 
         setStatus(
             "sprawdzanie trybu konfiguracji...",
             "checking"
         );
 
-
         await port.open({
             baudRate: 115200
         });
 
-
         connectButton.textContent =
             "ROZŁĄCZ Z BUTTON BOX";
 
-        connectButton.classList.add(
-            "connected"
-        );
+        connectButton.classList.add("connected");
 
-
-        keepReading =
-            true;
-
+        keepReading = true;
         startReading();
-
 
         await delay(1000);
 
-
-        await sendCommand(
-            "GET"
-        );
-
+        await sendCommand("GET");
 
         await delay(1500);
 
-
         if (configurationMode) {
-
             setStatus(
                 "połączono — tryb konfiguracji",
                 "connected"
@@ -765,41 +670,21 @@ async function connectButtonBox() {
             return;
         }
 
-
         setStatus(
             "Button Box nie jest w trybie konfiguracji",
             "warning"
         );
 
-
-        configMessage.classList.add(
-            "show"
-        );
-
-
+        configMessage.classList.add("show");
         setConfigurationMode(false);
 
-
     } catch (error) {
-
         console.error(error);
 
-
-        if (
-            error.name ===
-            "NotFoundError"
-        ) {
-
-            setStatus(
-                "nie wybrano urządzenia"
-            );
-
+        if (error.name === "NotFoundError") {
+            setStatus("nie wybrano urządzenia");
         } else {
-
-            setStatus(
-                "błąd połączenia",
-                "error"
-            );
+            setStatus("błąd połączenia", "error");
 
             alert(
                 "Nie udało się połączyć z Button Boxem.\n\n" +
@@ -807,109 +692,68 @@ async function connectButtonBox() {
             );
         }
 
-
         await cleanupConnection();
 
-
     } finally {
-
-        connecting =
-            false;
-
-        connectButton.disabled =
-            false;
+        connecting = false;
+        connectButton.disabled = false;
     }
 }
-
 
 /* =========================================================
    ODCZYT SERIAL
 ========================================================= */
 
 async function startReading() {
-
     if (!port || !port.readable) {
         return;
     }
 
-
     try {
+        reader = port.readable.getReader();
 
-        reader =
-            port.readable.getReader();
-
-
-        const decoder =
-            new TextDecoder();
-
-
-        let buffer =
-            "";
-
+        const decoder = new TextDecoder();
+        let buffer = "";
 
         while (keepReading) {
-
-            const result =
-                await reader.read();
-
+            const result = await reader.read();
 
             if (result.done) {
                 break;
             }
 
-
             if (!result.value) {
                 continue;
             }
 
-
-            const text =
-                decoder.decode(
-                    result.value,
-                    {
-                        stream: true
-                    }
-                );
-
+            const text = decoder.decode(
+                result.value,
+                { stream: true }
+            );
 
             buffer += text;
 
-
-            const lines =
-                buffer.split(/\r?\n/);
-
-
-            buffer =
-                lines.pop() || "";
-
+            const lines = buffer.split(/\r?\n/);
+            buffer = lines.pop() || "";
 
             for (const line of lines) {
-
-                const clean =
-                    line.trim();
-
+                const clean = line.trim();
 
                 if (!clean) {
                     continue;
                 }
 
-
                 parseSerialLine(clean);
             }
         }
 
-
     } catch (error) {
-
         if (keepReading) {
             console.error(error);
         }
 
-
     } finally {
-
         if (reader) {
-
             try {
                 reader.releaseLock();
             } catch (e) {}
@@ -919,28 +763,15 @@ async function startReading() {
     }
 }
 
-
 /* =========================================================
    PARSOWANIE ARDUINO
 ========================================================= */
 
 function parseSerialLine(line) {
+    console.log("Arduino:", line);
 
-    console.log(
-        "Arduino:",
-        line
-    );
-
-
-    if (
-        line.includes(
-            "TRYB KONFIGURACJI"
-        )
-    ) {
-
-        configurationMode =
-            true;
-
+    if (line.includes("TRYB KONFIGURACJI")) {
+        configurationMode = true;
         setConfigurationMode(true);
 
         setStatus(
@@ -950,17 +781,13 @@ function parseSerialLine(line) {
 
         return;
     }
-
 
     if (
         line === "CONFIG=1" ||
         line === "CONFIG_MODE=1" ||
         line === "CONFIG OK"
     ) {
-
-        configurationMode =
-            true;
-
+        configurationMode = true;
         setConfigurationMode(true);
 
         setStatus(
@@ -970,19 +797,11 @@ function parseSerialLine(line) {
 
         return;
     }
-
 
     if (line.startsWith("LEFT_UP=")) {
-
-        configurationMode =
-            true;
-
+        configurationMode = true;
         setConfigurationMode(true);
-
-        setField(
-            "leftUp",
-            line.substring(8)
-        );
+        setField("leftUp", line.substring(8));
 
         setStatus(
             "połączono — tryb konfiguracji",
@@ -991,19 +810,11 @@ function parseSerialLine(line) {
 
         return;
     }
-
 
     if (line.startsWith("LEFT_DOWN=")) {
-
-        configurationMode =
-            true;
-
+        configurationMode = true;
         setConfigurationMode(true);
-
-        setField(
-            "leftDown",
-            line.substring(10)
-        );
+        setField("leftDown", line.substring(10));
 
         setStatus(
             "połączono — tryb konfiguracji",
@@ -1012,19 +823,11 @@ function parseSerialLine(line) {
 
         return;
     }
-
 
     if (line.startsWith("RIGHT_UP=")) {
-
-        configurationMode =
-            true;
-
+        configurationMode = true;
         setConfigurationMode(true);
-
-        setField(
-            "rightUp",
-            line.substring(9)
-        );
+        setField("rightUp", line.substring(9));
 
         setStatus(
             "połączono — tryb konfiguracji",
@@ -1033,19 +836,11 @@ function parseSerialLine(line) {
 
         return;
     }
-
 
     if (line.startsWith("RIGHT_DOWN=")) {
-
-        configurationMode =
-            true;
-
+        configurationMode = true;
         setConfigurationMode(true);
-
-        setField(
-            "rightDown",
-            line.substring(11)
-        );
+        setField("rightDown", line.substring(11));
 
         setStatus(
             "połączono — tryb konfiguracji",
@@ -1054,19 +849,11 @@ function parseSerialLine(line) {
 
         return;
     }
-
 
     if (line.startsWith("MID=")) {
-
-        configurationMode =
-            true;
-
+        configurationMode = true;
         setConfigurationMode(true);
-
-        setField(
-            "mid",
-            line.substring(4)
-        );
+        setField("mid", line.substring(4));
 
         setStatus(
             "połączono — tryb konfiguracji",
@@ -1075,19 +862,11 @@ function parseSerialLine(line) {
 
         return;
     }
-
 
     if (line.startsWith("CZUWAK=")) {
-
-        configurationMode =
-            true;
-
+        configurationMode = true;
         setConfigurationMode(true);
-
-        setField(
-            "czuwak",
-            line.substring(7)
-        );
+        setField("czuwak", line.substring(7));
 
         setStatus(
             "połączono — tryb konfiguracji",
@@ -1097,16 +876,8 @@ function parseSerialLine(line) {
         return;
     }
 
-
-    if (
-        line.includes(
-            "GUROM-NORMAL-MODE"
-        )
-    ) {
-
-        configurationMode =
-            false;
-
+    if (line.includes("GUROM-NORMAL-MODE")) {
+        configurationMode = false;
         setConfigurationMode(false);
 
         setStatus(
@@ -1114,312 +885,197 @@ function parseSerialLine(line) {
             "warning"
         );
 
-        configMessage.classList.add(
-            "show"
-        );
-
+        configMessage.classList.add("show");
         return;
     }
 }
-
 
 /* =========================================================
    USTAWIENIE POLA
 ========================================================= */
 
 function setField(id, value) {
-
-    const input =
-        document.getElementById(id);
-
+    const input = document.getElementById(id);
 
     if (!input) {
         return;
     }
 
-
-    input.value =
-        value.trim();
+    input.value = value.trim();
 }
-
 
 /* =========================================================
    WYSYŁANIE
 ========================================================= */
 
 async function sendCommand(command) {
-
     if (!port) {
-
-        throw new Error(
-            "Brak połączenia."
-        );
+        throw new Error("Brak połączenia.");
     }
-
 
     if (!port.writable) {
-
-        throw new Error(
-            "Port nie jest gotowy do zapisu."
-        );
+        throw new Error("Port nie jest gotowy do zapisu.");
     }
 
-
-    const writer =
-        port.writable.getWriter();
-
+    const writer = port.writable.getWriter();
 
     try {
-
-        const encoder =
-            new TextEncoder();
-
+        const encoder = new TextEncoder();
 
         await writer.write(
-            encoder.encode(
-                command + "\n"
-            )
+            encoder.encode(command + "\n")
         );
 
-
     } finally {
-
         writer.releaseLock();
     }
 }
-
 
 /* =========================================================
    ODCZYT USTAWIEŃ
 ========================================================= */
 
 async function refreshSettings() {
-
     if (!port) {
         return;
     }
 
-
     if (!configurationMode) {
-
-        alert(
-            "Button Box nie jest w trybie konfiguracji."
-        );
-
+        alert("Button Box nie jest w trybie konfiguracji.");
         return;
     }
 
-
-    refreshButton.disabled =
-        true;
-
+    refreshButton.disabled = true;
 
     try {
-
-        await sendCommand(
-            "GET"
-        );
-
-
+        await sendCommand("GET");
         await delay(500);
 
-
     } catch (error) {
-
         alert(
             "Nie udało się odczytać ustawień.\n\n" +
             error.message
         );
 
-
     } finally {
-
-        refreshButton.disabled =
-            !configurationMode;
+        refreshButton.disabled = !configurationMode;
     }
 }
-
 
 /* =========================================================
    WALIDACJA
 ========================================================= */
 
 function validateSettings() {
-
     for (const id of fieldNames) {
-
-        const value =
-            document
-                .getElementById(id)
-                .value
-                .trim();
-
+        const value = document
+            .getElementById(id)
+            .value
+            .trim();
 
         if (!value) {
-
             alert(
                 "Nie ustawiono wszystkich przycisków.\n\n" +
-                "Brakuje: " +
-                getFieldName(id)
+                "Brakuje: " + getFieldName(id)
             );
 
             return false;
         }
     }
 
-
     return true;
 }
-
 
 /* =========================================================
    NAZWY
 ========================================================= */
 
 function getFieldName(id) {
-
     const names = {
-
-        leftUp: "Lewo góra",
-        leftDown: "Lewo dół",
-        rightUp: "Prawo góra",
-        rightDown: "Prawo dół",
+        leftUp: "Lewe drzwi — góra",
+        leftDown: "Lewe drzwi — dół",
+        rightUp: "Prawe drzwi — góra",
+        rightDown: "Prawe drzwi — dół",
         mid: "Środkowy",
         czuwak: "Czuwak"
-
     };
-
 
     return names[id] || id;
 }
-
 
 /* =========================================================
    ZAPIS
 ========================================================= */
 
 async function saveSettings() {
-
     if (!port) {
         return;
     }
 
-
     if (!configurationMode) {
-
-        alert(
-            "Button Box nie jest w trybie konfiguracji."
-        );
-
+        alert("Button Box nie jest w trybie konfiguracji.");
         return;
     }
-
 
     if (saving) {
         return;
     }
 
-
     if (!validateSettings()) {
         return;
     }
 
-
-    if (
-        !confirm(
-            "Czy na pewno chcesz zapisać ustawienia?"
-        )
-    ) {
+    if (!confirm("Czy na pewno chcesz zapisać ustawienia?")) {
         return;
     }
 
-
-    saving =
-        true;
-
-    saveButton.disabled =
-        true;
-
-    refreshButton.disabled =
-        true;
-
+    saving = true;
+    saveButton.disabled = true;
+    refreshButton.disabled = true;
 
     try {
-
-        /*
-           Każde ustawienie wysyłamy osobno.
-           Arduino zapisuje każde SET bezpośrednio
-           do EEPROM.
-        */
-
         await sendCommand(
             "SET LEFT_UP " +
             document.getElementById("leftUp").value.trim()
         );
-
         await delay(250);
-
 
         await sendCommand(
             "SET LEFT_DOWN " +
             document.getElementById("leftDown").value.trim()
         );
-
         await delay(250);
-
 
         await sendCommand(
             "SET RIGHT_UP " +
             document.getElementById("rightUp").value.trim()
         );
-
         await delay(250);
-
 
         await sendCommand(
             "SET RIGHT_DOWN " +
             document.getElementById("rightDown").value.trim()
         );
-
         await delay(250);
-
 
         await sendCommand(
             "SET MID " +
             document.getElementById("mid").value.trim()
         );
-
         await delay(250);
-
 
         await sendCommand(
             "SET CZUWAK " +
             document.getElementById("czuwak").value.trim()
         );
-
         await delay(500);
 
-
-        /*
-           Teraz prosimy Arduino o ponowny odczyt EEPROM.
-           Dzięki temu widzimy, czy wartości rzeczywiście
-           zostały zapisane.
-        */
-
-        await sendCommand(
-            "GET"
-        );
-
+        await sendCommand("GET");
         await delay(1000);
 
-
-        alert(
-            "Ustawienia zostały zapisane."
-        );
-
+        alert("Ustawienia zostały zapisane.");
 
     } catch (error) {
-
         console.error(error);
 
         alert(
@@ -1427,296 +1083,151 @@ async function saveSettings() {
             error.message
         );
 
-
     } finally {
-
-        saving =
-            false;
-
-        saveButton.disabled =
-            !configurationMode;
-
-        refreshButton.disabled =
-            !configurationMode;
+        saving = false;
+        saveButton.disabled = !configurationMode;
+        refreshButton.disabled = !configurationMode;
     }
 }
-
 
 /* =========================================================
    WYBÓR KLAWISZA
 ========================================================= */
 
 function startKeyCapture(button) {
-
     if (!configurationMode) {
         return;
     }
 
-
     cancelKeyCapture();
 
+    const field = button.dataset.field;
+    const input = document.getElementById(field);
 
-    const field =
-        button.dataset.field;
+    captureButton = button;
+    captureModifiers = [];
+    captureUsedCombination = false;
 
+    captureHandler = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-    const input =
-        document.getElementById(field);
-
-
-    captureButton =
-        button;
-
-    captureModifiers =
-        [];
-
-    captureUsedCombination =
-        false;
-
-
-    captureHandler =
-        function(event) {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-
-            if (event.key === "Control") {
-
-                if (
-                    !captureModifiers.includes("CTRL")
-                ) {
-
-                    captureModifiers.push("CTRL");
-                }
-
-                return;
+        if (event.key === "Control") {
+            if (!captureModifiers.includes("CTRL")) {
+                captureModifiers.push("CTRL");
             }
+            return;
+        }
 
-
-            if (event.key === "Shift") {
-
-                if (
-                    !captureModifiers.includes("SHIFT")
-                ) {
-
-                    captureModifiers.push("SHIFT");
-                }
-
-                return;
+        if (event.key === "Shift") {
+            if (!captureModifiers.includes("SHIFT")) {
+                captureModifiers.push("SHIFT");
             }
+            return;
+        }
 
-
-            if (event.key === "Alt") {
-
-                if (
-                    !captureModifiers.includes("ALT")
-                ) {
-
-                    captureModifiers.push("ALT");
-                }
-
-                return;
+        if (event.key === "Alt") {
+            if (!captureModifiers.includes("ALT")) {
+                captureModifiers.push("ALT");
             }
+            return;
+        }
 
-
-            if (event.key === "Meta") {
-
-                if (
-                    !captureModifiers.includes("GUI")
-                ) {
-
-                    captureModifiers.push("GUI");
-                }
-
-                return;
+        if (event.key === "Meta") {
+            if (!captureModifiers.includes("GUI")) {
+                captureModifiers.push("GUI");
             }
+            return;
+        }
 
+        const key = convertKey(event);
 
-            const key =
-                convertKey(event);
+        if (!key) {
+            return;
+        }
 
+        let keys = [...captureModifiers];
+        keys.push(key);
 
-            if (!key) {
-                return;
-            }
+        if (keys.length > 4) {
+            alert("Maksymalnie można ustawić 4 klawisze.");
+            cancelKeyCapture();
+            return;
+        }
 
+        if (captureModifiers.length > 0) {
+            captureUsedCombination = true;
+        }
 
-            let keys =
-                [...captureModifiers];
+        finishKeyCapture(input, button, keys);
+    };
 
+    captureKeyUpHandler = function(event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-            keys.push(key);
+        let modifier = null;
 
+        if (event.key === "Control") {
+            modifier = "CTRL";
+        } else if (event.key === "Shift") {
+            modifier = "SHIFT";
+        } else if (event.key === "Alt") {
+            modifier = "ALT";
+        } else if (event.key === "Meta") {
+            modifier = "GUI";
+        }
 
-            if (keys.length > 4) {
+        if (!modifier) {
+            return;
+        }
 
-                alert(
-                    "Maksymalnie można ustawić 4 klawisze."
-                );
+        if (captureUsedCombination) {
+            return;
+        }
 
-                cancelKeyCapture();
+        captureModifiers = captureModifiers.filter(
+            key => key !== modifier
+        );
 
-                return;
-            }
+        if (captureModifiers.length === 0) {
+            finishKeyCapture(input, button, [modifier]);
+        }
+    };
 
+    button.textContent = "NACIŚNIJ KLAWISZ";
+    button.classList.add("waiting");
 
-            if (captureModifiers.length > 0) {
-
-                captureUsedCombination =
-                    true;
-            }
-
-
-            finishKeyCapture(
-                input,
-                button,
-                keys
-            );
-        };
-
-
-    captureKeyUpHandler =
-        function(event) {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-
-            let modifier = null;
-
-
-            if (event.key === "Control") {
-                modifier = "CTRL";
-            }
-
-            else if (event.key === "Shift") {
-                modifier = "SHIFT";
-            }
-
-            else if (event.key === "Alt") {
-                modifier = "ALT";
-            }
-
-            else if (event.key === "Meta") {
-                modifier = "GUI";
-            }
-
-
-            if (!modifier) {
-                return;
-            }
-
-
-            if (captureUsedCombination) {
-                return;
-            }
-
-
-            captureModifiers =
-                captureModifiers.filter(
-                    key => key !== modifier
-                );
-
-
-            if (
-                captureModifiers.length === 0
-            ) {
-
-                finishKeyCapture(
-                    input,
-                    button,
-                    [modifier]
-                );
-            }
-        };
-
-
-    button.textContent =
-        "NACIŚNIJ KLAWISZ";
-
-    button.classList.add(
-        "waiting"
-    );
-
-
-    document.addEventListener(
-        "keydown",
-        captureHandler,
-        true
-    );
-
-
-    document.addEventListener(
-        "keyup",
-        captureKeyUpHandler,
-        true
-    );
+    document.addEventListener("keydown", captureHandler, true);
+    document.addEventListener("keyup", captureKeyUpHandler, true);
 }
-
 
 /* =========================================================
    ZAKOŃCZENIE WYBORU
 ========================================================= */
 
-function finishKeyCapture(
-    input,
-    button,
-    keys
-) {
+function finishKeyCapture(input, button, keys) {
+    input.value = keys.join("+");
 
-    input.value =
-        keys.join("+");
+    button.textContent = "Wybierz";
+    button.classList.remove("waiting");
 
+    document.removeEventListener("keydown", captureHandler, true);
+    document.removeEventListener("keyup", captureKeyUpHandler, true);
 
-    button.textContent =
-        "Wybierz";
-
-    button.classList.remove(
-        "waiting"
-    );
-
-
-    document.removeEventListener(
-        "keydown",
-        captureHandler,
-        true
-    );
-
-
-    document.removeEventListener(
-        "keyup",
-        captureKeyUpHandler,
-        true
-    );
-
-
-    captureHandler =
-        null;
-
-    captureKeyUpHandler =
-        null;
-
-    captureButton =
-        null;
-
-    captureModifiers =
-        [];
-
-    captureUsedCombination =
-        false;
+    captureHandler = null;
+    captureKeyUpHandler = null;
+    captureButton = null;
+    captureModifiers = [];
+    captureUsedCombination = false;
 }
-
 
 /* =========================================================
    KONWERSJA KLAWISZA
 ========================================================= */
 
 function convertKey(event) {
-
-    const key =
-        event.key;
-
+    const key = event.key;
 
     if (
         key === "Control" ||
@@ -1727,315 +1238,147 @@ function convertKey(event) {
         return null;
     }
 
+    if (key === " ") return "SPACE";
+    if (key === "Enter") return "ENTER";
+    if (key === "Backspace") return "BACKSPACE";
+    if (key === "Tab") return "TAB";
+    if (key === "Escape") return "ESC";
+    if (key === "Delete") return "DELETE";
+    if (key === "Home") return "HOME";
+    if (key === "End") return "END";
+    if (key === "PageUp") return "PAGEUP";
+    if (key === "PageDown") return "PAGEDOWN";
+    if (key === "ArrowUp") return "UP";
+    if (key === "ArrowDown") return "DOWN";
+    if (key === "ArrowLeft") return "LEFT";
+    if (key === "ArrowRight") return "RIGHT";
 
-    if (key === " ") {
-        return "SPACE";
-    }
-
-
-    if (key === "Enter") {
-        return "ENTER";
-    }
-
-
-    if (key === "Backspace") {
-        return "BACKSPACE";
-    }
-
-
-    if (key === "Tab") {
-        return "TAB";
-    }
-
-
-    if (key === "Escape") {
-        return "ESC";
-    }
-
-
-    if (key === "Delete") {
-        return "DELETE";
-    }
-
-
-    if (key === "Home") {
-        return "HOME";
-    }
-
-
-    if (key === "End") {
-        return "END";
-    }
-
-
-    if (key === "PageUp") {
-        return "PAGEUP";
-    }
-
-
-    if (key === "PageDown") {
-        return "PAGEDOWN";
-    }
-
-
-    if (key === "ArrowUp") {
-        return "UP";
-    }
-
-
-    if (key === "ArrowDown") {
-        return "DOWN";
-    }
-
-
-    if (key === "ArrowLeft") {
-        return "LEFT";
-    }
-
-
-    if (key === "ArrowRight") {
-        return "RIGHT";
-    }
-
-
-    if (
-        /^F([1-9]|1[0-2])$/.test(key)
-    ) {
-
+    if (/^F([1-9]|1[0-2])$/.test(key)) {
         return key.toUpperCase();
     }
-
 
     if (key.length === 1) {
-
         return key.toUpperCase();
     }
-
 
     return key.toUpperCase();
 }
-
 
 /* =========================================================
    ANULOWANIE WYBORU
 ========================================================= */
 
 function cancelKeyCapture() {
-
     if (captureHandler) {
-
-        document.removeEventListener(
-            "keydown",
-            captureHandler,
-            true
-        );
-
-        captureHandler =
-            null;
+        document.removeEventListener("keydown", captureHandler, true);
+        captureHandler = null;
     }
-
 
     if (captureKeyUpHandler) {
-
-        document.removeEventListener(
-            "keyup",
-            captureKeyUpHandler,
-            true
-        );
-
-        captureKeyUpHandler =
-            null;
+        document.removeEventListener("keyup", captureKeyUpHandler, true);
+        captureKeyUpHandler = null;
     }
-
 
     if (captureButton) {
-
-        captureButton.textContent =
-            "Wybierz";
-
-        captureButton.classList.remove(
-            "waiting"
-        );
-
-        captureButton =
-            null;
+        captureButton.textContent = "Wybierz";
+        captureButton.classList.remove("waiting");
+        captureButton = null;
     }
 
-
-    captureModifiers =
-        [];
-
-    captureUsedCombination =
-        false;
+    captureModifiers = [];
+    captureUsedCombination = false;
 }
-
 
 /* =========================================================
    CZYSZCZENIE
 ========================================================= */
 
 async function cleanupConnection() {
-
-    keepReading =
-        false;
-
+    keepReading = false;
 
     cancelKeyCapture();
 
-
     if (reader) {
-
         try {
             await reader.cancel();
         } catch (e) {}
-
     }
-
 
     await delay(100);
 
-
     if (port) {
-
         try {
             await port.close();
         } catch (e) {}
-
     }
 
-
-    reader =
-        null;
-
-    port =
-        null;
-
-    configurationMode =
-        false;
-
+    reader = null;
+    port = null;
+    configurationMode = false;
 
     setConfigurationMode(false);
 
-
-    connectButton.textContent =
-        "POŁĄCZ Z BUTTON BOX";
-
-    connectButton.classList.remove(
-        "connected"
-    );
+    connectButton.textContent = "POŁĄCZ Z BUTTON BOX";
+    connectButton.classList.remove("connected");
 }
-
 
 /* =========================================================
    ROZŁĄCZANIE
 ========================================================= */
 
 async function disconnectButtonBox() {
-
     await cleanupConnection();
 
+    setStatus("niepołączono");
 
-    setStatus(
-        "niepołączono"
-    );
-
-
-    configMessage.classList.remove(
-        "show"
-    );
+    configMessage.classList.remove("show");
 }
-
 
 /* =========================================================
    OPÓŹNIENIE
 ========================================================= */
 
 function delay(ms) {
-
-    return new Promise(
-        resolve =>
-            setTimeout(resolve, ms)
-    );
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
-
 
 /* =========================================================
    PRZYCISKI
 ========================================================= */
 
-connectButton.addEventListener(
-    "click",
-    connectButtonBox
-);
+connectButton.addEventListener("click", connectButtonBox);
+saveButton.addEventListener("click", saveSettings);
+refreshButton.addEventListener("click", refreshSettings);
 
-
-saveButton.addEventListener(
-    "click",
-    saveSettings
-);
-
-
-refreshButton.addEventListener(
-    "click",
-    refreshSettings
-);
-
-
-document
-    .querySelectorAll(".capture")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            function() {
-
-                startKeyCapture(this);
-
-            }
-        );
-
+document.querySelectorAll(".capture").forEach(button => {
+    button.addEventListener("click", function() {
+        startKeyCapture(this);
     });
-
+});
 
 /* =========================================================
    ODŁĄCZENIE USB
 ========================================================= */
 
 if ("serial" in navigator) {
+    navigator.serial.addEventListener("disconnect", async function(event) {
+        if (port && event.target === port) {
+            await cleanupConnection();
 
-    navigator.serial.addEventListener(
-        "disconnect",
-        async function(event) {
-
-            if (
-                port &&
-                event.target === port
-            ) {
-
-                await cleanupConnection();
-
-
-                setStatus(
-                    "Button Box odłączony",
-                    "error"
-                );
-
-            }
-
+            setStatus(
+                "Button Box odłączony",
+                "error"
+            );
         }
-    );
+    });
 }
-
 
 /* =========================================================
    START
 ========================================================= */
 
 setConfigurationMode(false);
-
-setStatus(
-    "niepołączono"
-);
+setStatus("niepołączono");
 
 </script>
 
