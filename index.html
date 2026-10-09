@@ -137,7 +137,7 @@
             font-weight: bold;
         }
 
-        /* Większe i wyraźniejsze nazwy drzwi */
+        /* Jednakowy styl nazw wszystkich przycisków */
         .setting.door-setting label {
             font-size: 19px;
             font-weight: 800;
@@ -327,165 +327,76 @@
         <div class="settings">
 
             <div class="setting door-setting">
-
                 <label for="leftUp">
                     LEWE DRZWI — GÓRA
                 </label>
 
                 <div class="row">
-                    <input
-                        id="leftUp"
-                        type="text"
-                        readonly
-                        disabled
-                        placeholder="Brak ustawienia"
-                    >
-
-                    <button
-                        class="capture"
-                        data-field="leftUp"
-                        disabled
-                    >
-                        Wybierz
-                    </button>
+                    <input id="leftUp" type="text" readonly disabled placeholder="Brak ustawienia">
+                    <button class="capture" data-field="leftUp" disabled>Wybierz</button>
                 </div>
-
             </div>
 
             <div class="setting door-setting">
-
                 <label for="leftDown">
                     LEWE DRZWI — DÓŁ
                 </label>
 
                 <div class="row">
-                    <input
-                        id="leftDown"
-                        type="text"
-                        readonly
-                        disabled
-                        placeholder="Brak ustawienia"
-                    >
-
-                    <button
-                        class="capture"
-                        data-field="leftDown"
-                        disabled
-                    >
-                        Wybierz
-                    </button>
+                    <input id="leftDown" type="text" readonly disabled placeholder="Brak ustawienia">
+                    <button class="capture" data-field="leftDown" disabled>Wybierz</button>
                 </div>
-
             </div>
 
             <div class="setting door-setting">
-
                 <label for="rightUp">
                     PRAWE DRZWI — GÓRA
                 </label>
 
                 <div class="row">
-                    <input
-                        id="rightUp"
-                        type="text"
-                        readonly
-                        disabled
-                        placeholder="Brak ustawienia"
-                    >
-
-                    <button
-                        class="capture"
-                        data-field="rightUp"
-                        disabled
-                    >
-                        Wybierz
-                    </button>
+                    <input id="rightUp" type="text" readonly disabled placeholder="Brak ustawienia">
+                    <button class="capture" data-field="rightUp" disabled>Wybierz</button>
                 </div>
-
             </div>
 
             <div class="setting door-setting">
-
                 <label for="rightDown">
                     PRAWE DRZWI — DÓŁ
                 </label>
 
                 <div class="row">
-                    <input
-                        id="rightDown"
-                        type="text"
-                        readonly
-                        disabled
-                        placeholder="Brak ustawienia"
-                    >
-
-                    <button
-                        class="capture"
-                        data-field="rightDown"
-                        disabled
-                    >
-                        Wybierz
-                    </button>
+                    <input id="rightDown" type="text" readonly disabled placeholder="Brak ustawienia">
+                    <button class="capture" data-field="rightDown" disabled>Wybierz</button>
                 </div>
-
             </div>
 
-            <div class="setting">
-
+            <!-- ZMIANA: dodano door-setting -->
+            <div class="setting door-setting">
                 <label for="mid">
                     Środkowy
                 </label>
 
                 <div class="row">
-                    <input
-                        id="mid"
-                        type="text"
-                        readonly
-                        disabled
-                        placeholder="Brak ustawienia"
-                    >
-
-                    <button
-                        class="capture"
-                        data-field="mid"
-                        disabled
-                    >
-                        Wybierz
-                    </button>
+                    <input id="mid" type="text" readonly disabled placeholder="Brak ustawienia">
+                    <button class="capture" data-field="mid" disabled>Wybierz</button>
                 </div>
-
             </div>
 
-            <div class="setting">
-
+            <!-- ZMIANA: dodano door-setting -->
+            <div class="setting door-setting">
                 <label for="czuwak">
                     Czuwak
                 </label>
 
                 <div class="row">
-                    <input
-                        id="czuwak"
-                        type="text"
-                        readonly
-                        disabled
-                        placeholder="Brak ustawienia"
-                    >
-
-                    <button
-                        class="capture"
-                        data-field="czuwak"
-                        disabled
-                    >
-                        Wybierz
-                    </button>
+                    <input id="czuwak" type="text" readonly disabled placeholder="Brak ustawienia">
+                    <button class="capture" data-field="czuwak" disabled>Wybierz</button>
                 </div>
-
             </div>
 
         </div>
 
         <div class="bottom-buttons">
-
             <button id="refreshButton" disabled>
                 ODCZYTAJ USTAWIENIA
             </button>
@@ -493,7 +404,6 @@
             <button id="saveButton" disabled>
                 ZAPISZ USTAWIENIA
             </button>
-
         </div>
 
     </div>
@@ -520,27 +430,14 @@ let captureButton = null;
 let captureModifiers = [];
 let captureUsedCombination = false;
 
-/* =========================================================
-   ELEMENTY
-========================================================= */
+/* ELEMENTY */
 
-const connectButton =
-    document.getElementById("connectButton");
-
-const statusBox =
-    document.getElementById("status");
-
-const configMessage =
-    document.getElementById("configMessage");
-
-const successMessage =
-    document.getElementById("successMessage");
-
-const saveButton =
-    document.getElementById("saveButton");
-
-const refreshButton =
-    document.getElementById("refreshButton");
+const connectButton = document.getElementById("connectButton");
+const statusBox = document.getElementById("status");
+const configMessage = document.getElementById("configMessage");
+const successMessage = document.getElementById("successMessage");
+const saveButton = document.getElementById("saveButton");
+const refreshButton = document.getElementById("refreshButton");
 
 const fieldNames = [
     "leftUp",
@@ -551,9 +448,7 @@ const fieldNames = [
     "czuwak"
 ];
 
-/* =========================================================
-   STATUS
-========================================================= */
+/* STATUS */
 
 function setStatus(text, type = "") {
     statusBox.textContent = "Status: " + text;
@@ -564,9 +459,7 @@ function setStatus(text, type = "") {
     }
 }
 
-/* =========================================================
-   TRYB KONFIGURACJI
-========================================================= */
+/* TRYB KONFIGURACJI */
 
 function setConfigurationMode(enabled) {
     configurationMode = enabled;
@@ -590,9 +483,7 @@ function setConfigurationMode(enabled) {
     }
 }
 
-/* =========================================================
-   WEB SERIAL
-========================================================= */
+/* WEB SERIAL */
 
 function checkWebSerial() {
     if (!("serial" in navigator)) {
@@ -607,30 +498,23 @@ function checkWebSerial() {
     return true;
 }
 
-/* =========================================================
-   POŁĄCZENIE
-========================================================= */
+/* POŁĄCZENIE */
 
 async function connectButtonBox() {
-    if (connecting) {
-        return;
-    }
+    if (connecting) return;
 
     if (port) {
         await disconnectButtonBox();
         return;
     }
 
-    if (!checkWebSerial()) {
-        return;
-    }
+    if (!checkWebSerial()) return;
 
     connecting = true;
     connectButton.disabled = true;
 
     configurationMode = false;
     setConfigurationMode(false);
-
     configMessage.classList.remove("show");
 
     setStatus("wybierz Button Box...", "checking");
@@ -638,43 +522,26 @@ async function connectButtonBox() {
     try {
         port = await navigator.serial.requestPort();
 
-        setStatus(
-            "sprawdzanie trybu konfiguracji...",
-            "checking"
-        );
+        setStatus("sprawdzanie trybu konfiguracji...", "checking");
 
-        await port.open({
-            baudRate: 115200
-        });
+        await port.open({ baudRate: 115200 });
 
-        connectButton.textContent =
-            "ROZŁĄCZ Z BUTTON BOX";
-
+        connectButton.textContent = "ROZŁĄCZ Z BUTTON BOX";
         connectButton.classList.add("connected");
 
         keepReading = true;
         startReading();
 
         await delay(1000);
-
         await sendCommand("GET");
-
         await delay(1500);
 
         if (configurationMode) {
-            setStatus(
-                "połączono — tryb konfiguracji",
-                "connected"
-            );
-
+            setStatus("połączono — tryb konfiguracji", "connected");
             return;
         }
 
-        setStatus(
-            "Button Box nie jest w trybie konfiguracji",
-            "warning"
-        );
-
+        setStatus("Button Box nie jest w trybie konfiguracji", "warning");
         configMessage.classList.add("show");
         setConfigurationMode(false);
 
@@ -700,14 +567,10 @@ async function connectButtonBox() {
     }
 }
 
-/* =========================================================
-   ODCZYT SERIAL
-========================================================= */
+/* ODCZYT SERIAL */
 
 async function startReading() {
-    if (!port || !port.readable) {
-        return;
-    }
+    if (!port || !port.readable) return;
 
     try {
         reader = port.readable.getReader();
@@ -718,39 +581,22 @@ async function startReading() {
         while (keepReading) {
             const result = await reader.read();
 
-            if (result.done) {
-                break;
-            }
+            if (result.done) break;
+            if (!result.value) continue;
 
-            if (!result.value) {
-                continue;
-            }
-
-            const text = decoder.decode(
-                result.value,
-                { stream: true }
-            );
-
-            buffer += text;
+            buffer += decoder.decode(result.value, { stream: true });
 
             const lines = buffer.split(/\r?\n/);
             buffer = lines.pop() || "";
 
             for (const line of lines) {
                 const clean = line.trim();
-
-                if (!clean) {
-                    continue;
-                }
-
-                parseSerialLine(clean);
+                if (clean) parseSerialLine(clean);
             }
         }
 
     } catch (error) {
-        if (keepReading) {
-            console.error(error);
-        }
+        if (keepReading) console.error(error);
 
     } finally {
         if (reader) {
@@ -763,9 +609,7 @@ async function startReading() {
     }
 }
 
-/* =========================================================
-   PARSOWANIE ARDUINO
-========================================================= */
+/* PARSOWANIE ARDUINO */
 
 function parseSerialLine(line) {
     console.log("Arduino:", line);
@@ -773,12 +617,7 @@ function parseSerialLine(line) {
     if (line.includes("TRYB KONFIGURACJI")) {
         configurationMode = true;
         setConfigurationMode(true);
-
-        setStatus(
-            "połączono — tryb konfiguracji",
-            "connected"
-        );
-
+        setStatus("połączono — tryb konfiguracji", "connected");
         return;
     }
 
@@ -789,12 +628,7 @@ function parseSerialLine(line) {
     ) {
         configurationMode = true;
         setConfigurationMode(true);
-
-        setStatus(
-            "połączono — tryb konfiguracji",
-            "connected"
-        );
-
+        setStatus("połączono — tryb konfiguracji", "connected");
         return;
     }
 
@@ -802,12 +636,7 @@ function parseSerialLine(line) {
         configurationMode = true;
         setConfigurationMode(true);
         setField("leftUp", line.substring(8));
-
-        setStatus(
-            "połączono — tryb konfiguracji",
-            "connected"
-        );
-
+        setStatus("połączono — tryb konfiguracji", "connected");
         return;
     }
 
@@ -815,12 +644,7 @@ function parseSerialLine(line) {
         configurationMode = true;
         setConfigurationMode(true);
         setField("leftDown", line.substring(10));
-
-        setStatus(
-            "połączono — tryb konfiguracji",
-            "connected"
-        );
-
+        setStatus("połączono — tryb konfiguracji", "connected");
         return;
     }
 
@@ -828,12 +652,7 @@ function parseSerialLine(line) {
         configurationMode = true;
         setConfigurationMode(true);
         setField("rightUp", line.substring(9));
-
-        setStatus(
-            "połączono — tryb konfiguracji",
-            "connected"
-        );
-
+        setStatus("połączono — tryb konfiguracji", "connected");
         return;
     }
 
@@ -841,12 +660,7 @@ function parseSerialLine(line) {
         configurationMode = true;
         setConfigurationMode(true);
         setField("rightDown", line.substring(11));
-
-        setStatus(
-            "połączono — tryb konfiguracji",
-            "connected"
-        );
-
+        setStatus("połączono — tryb konfiguracji", "connected");
         return;
     }
 
@@ -854,12 +668,7 @@ function parseSerialLine(line) {
         configurationMode = true;
         setConfigurationMode(true);
         setField("mid", line.substring(4));
-
-        setStatus(
-            "połączono — tryb konfiguracji",
-            "connected"
-        );
-
+        setStatus("połączono — tryb konfiguracji", "connected");
         return;
     }
 
@@ -867,78 +676,46 @@ function parseSerialLine(line) {
         configurationMode = true;
         setConfigurationMode(true);
         setField("czuwak", line.substring(7));
-
-        setStatus(
-            "połączono — tryb konfiguracji",
-            "connected"
-        );
-
+        setStatus("połączono — tryb konfiguracji", "connected");
         return;
     }
 
     if (line.includes("GUROM-NORMAL-MODE")) {
         configurationMode = false;
         setConfigurationMode(false);
-
-        setStatus(
-            "Button Box działa normalnie",
-            "warning"
-        );
-
+        setStatus("Button Box działa normalnie", "warning");
         configMessage.classList.add("show");
-        return;
     }
 }
 
-/* =========================================================
-   USTAWIENIE POLA
-========================================================= */
+/* USTAWIENIE POLA */
 
 function setField(id, value) {
     const input = document.getElementById(id);
-
-    if (!input) {
-        return;
-    }
-
+    if (!input) return;
     input.value = value.trim();
 }
 
-/* =========================================================
-   WYSYŁANIE
-========================================================= */
+/* WYSYŁANIE */
 
 async function sendCommand(command) {
-    if (!port) {
-        throw new Error("Brak połączenia.");
-    }
-
-    if (!port.writable) {
-        throw new Error("Port nie jest gotowy do zapisu.");
-    }
+    if (!port) throw new Error("Brak połączenia.");
+    if (!port.writable) throw new Error("Port nie jest gotowy do zapisu.");
 
     const writer = port.writable.getWriter();
 
     try {
         const encoder = new TextEncoder();
-
-        await writer.write(
-            encoder.encode(command + "\n")
-        );
-
+        await writer.write(encoder.encode(command + "\n"));
     } finally {
         writer.releaseLock();
     }
 }
 
-/* =========================================================
-   ODCZYT USTAWIEŃ
-========================================================= */
+/* ODCZYT USTAWIEŃ */
 
 async function refreshSettings() {
-    if (!port) {
-        return;
-    }
+    if (!port) return;
 
     if (!configurationMode) {
         alert("Button Box nie jest w trybie konfiguracji.");
@@ -950,28 +727,18 @@ async function refreshSettings() {
     try {
         await sendCommand("GET");
         await delay(500);
-
     } catch (error) {
-        alert(
-            "Nie udało się odczytać ustawień.\n\n" +
-            error.message
-        );
-
+        alert("Nie udało się odczytać ustawień.\n\n" + error.message);
     } finally {
         refreshButton.disabled = !configurationMode;
     }
 }
 
-/* =========================================================
-   WALIDACJA
-========================================================= */
+/* WALIDACJA */
 
 function validateSettings() {
     for (const id of fieldNames) {
-        const value = document
-            .getElementById(id)
-            .value
-            .trim();
+        const value = document.getElementById(id).value.trim();
 
         if (!value) {
             alert(
@@ -986,9 +753,7 @@ function validateSettings() {
     return true;
 }
 
-/* =========================================================
-   NAZWY
-========================================================= */
+/* NAZWY */
 
 function getFieldName(id) {
     const names = {
@@ -1003,71 +768,42 @@ function getFieldName(id) {
     return names[id] || id;
 }
 
-/* =========================================================
-   ZAPIS
-========================================================= */
+/* ZAPIS */
 
 async function saveSettings() {
-    if (!port) {
-        return;
-    }
+    if (!port) return;
 
     if (!configurationMode) {
         alert("Button Box nie jest w trybie konfiguracji.");
         return;
     }
 
-    if (saving) {
-        return;
-    }
+    if (saving) return;
+    if (!validateSettings()) return;
 
-    if (!validateSettings()) {
-        return;
-    }
-
-    if (!confirm("Czy na pewno chcesz zapisać ustawienia?")) {
-        return;
-    }
+    if (!confirm("Czy na pewno chcesz zapisać ustawienia?")) return;
 
     saving = true;
     saveButton.disabled = true;
     refreshButton.disabled = true;
 
     try {
-        await sendCommand(
-            "SET LEFT_UP " +
-            document.getElementById("leftUp").value.trim()
-        );
+        await sendCommand("SET LEFT_UP " + document.getElementById("leftUp").value.trim());
         await delay(250);
 
-        await sendCommand(
-            "SET LEFT_DOWN " +
-            document.getElementById("leftDown").value.trim()
-        );
+        await sendCommand("SET LEFT_DOWN " + document.getElementById("leftDown").value.trim());
         await delay(250);
 
-        await sendCommand(
-            "SET RIGHT_UP " +
-            document.getElementById("rightUp").value.trim()
-        );
+        await sendCommand("SET RIGHT_UP " + document.getElementById("rightUp").value.trim());
         await delay(250);
 
-        await sendCommand(
-            "SET RIGHT_DOWN " +
-            document.getElementById("rightDown").value.trim()
-        );
+        await sendCommand("SET RIGHT_DOWN " + document.getElementById("rightDown").value.trim());
         await delay(250);
 
-        await sendCommand(
-            "SET MID " +
-            document.getElementById("mid").value.trim()
-        );
+        await sendCommand("SET MID " + document.getElementById("mid").value.trim());
         await delay(250);
 
-        await sendCommand(
-            "SET CZUWAK " +
-            document.getElementById("czuwak").value.trim()
-        );
+        await sendCommand("SET CZUWAK " + document.getElementById("czuwak").value.trim());
         await delay(500);
 
         await sendCommand("GET");
@@ -1077,11 +813,7 @@ async function saveSettings() {
 
     } catch (error) {
         console.error(error);
-
-        alert(
-            "Błąd podczas zapisywania.\n\n" +
-            error.message
-        );
+        alert("Błąd podczas zapisywania.\n\n" + error.message);
 
     } finally {
         saving = false;
@@ -1090,14 +822,10 @@ async function saveSettings() {
     }
 }
 
-/* =========================================================
-   WYBÓR KLAWISZA
-========================================================= */
+/* WYBÓR KLAWISZA */
 
 function startKeyCapture(button) {
-    if (!configurationMode) {
-        return;
-    }
+    if (!configurationMode) return;
 
     cancelKeyCapture();
 
@@ -1113,38 +841,27 @@ function startKeyCapture(button) {
         event.stopPropagation();
 
         if (event.key === "Control") {
-            if (!captureModifiers.includes("CTRL")) {
-                captureModifiers.push("CTRL");
-            }
+            if (!captureModifiers.includes("CTRL")) captureModifiers.push("CTRL");
             return;
         }
 
         if (event.key === "Shift") {
-            if (!captureModifiers.includes("SHIFT")) {
-                captureModifiers.push("SHIFT");
-            }
+            if (!captureModifiers.includes("SHIFT")) captureModifiers.push("SHIFT");
             return;
         }
 
         if (event.key === "Alt") {
-            if (!captureModifiers.includes("ALT")) {
-                captureModifiers.push("ALT");
-            }
+            if (!captureModifiers.includes("ALT")) captureModifiers.push("ALT");
             return;
         }
 
         if (event.key === "Meta") {
-            if (!captureModifiers.includes("GUI")) {
-                captureModifiers.push("GUI");
-            }
+            if (!captureModifiers.includes("GUI")) captureModifiers.push("GUI");
             return;
         }
 
         const key = convertKey(event);
-
-        if (!key) {
-            return;
-        }
+        if (!key) return;
 
         let keys = [...captureModifiers];
         keys.push(key);
@@ -1168,27 +885,15 @@ function startKeyCapture(button) {
 
         let modifier = null;
 
-        if (event.key === "Control") {
-            modifier = "CTRL";
-        } else if (event.key === "Shift") {
-            modifier = "SHIFT";
-        } else if (event.key === "Alt") {
-            modifier = "ALT";
-        } else if (event.key === "Meta") {
-            modifier = "GUI";
-        }
+        if (event.key === "Control") modifier = "CTRL";
+        else if (event.key === "Shift") modifier = "SHIFT";
+        else if (event.key === "Alt") modifier = "ALT";
+        else if (event.key === "Meta") modifier = "GUI";
 
-        if (!modifier) {
-            return;
-        }
+        if (!modifier) return;
+        if (captureUsedCombination) return;
 
-        if (captureUsedCombination) {
-            return;
-        }
-
-        captureModifiers = captureModifiers.filter(
-            key => key !== modifier
-        );
+        captureModifiers = captureModifiers.filter(key => key !== modifier);
 
         if (captureModifiers.length === 0) {
             finishKeyCapture(input, button, [modifier]);
@@ -1202,9 +907,7 @@ function startKeyCapture(button) {
     document.addEventListener("keyup", captureKeyUpHandler, true);
 }
 
-/* =========================================================
-   ZAKOŃCZENIE WYBORU
-========================================================= */
+/* ZAKOŃCZENIE WYBORU */
 
 function finishKeyCapture(input, button, keys) {
     input.value = keys.join("+");
@@ -1222,9 +925,7 @@ function finishKeyCapture(input, button, keys) {
     captureUsedCombination = false;
 }
 
-/* =========================================================
-   KONWERSJA KLAWISZA
-========================================================= */
+/* KONWERSJA KLAWISZA */
 
 function convertKey(event) {
     const key = event.key;
@@ -1234,9 +935,7 @@ function convertKey(event) {
         key === "Shift" ||
         key === "Alt" ||
         key === "Meta"
-    ) {
-        return null;
-    }
+    ) return null;
 
     if (key === " ") return "SPACE";
     if (key === "Enter") return "ENTER";
@@ -1253,20 +952,13 @@ function convertKey(event) {
     if (key === "ArrowLeft") return "LEFT";
     if (key === "ArrowRight") return "RIGHT";
 
-    if (/^F([1-9]|1[0-2])$/.test(key)) {
-        return key.toUpperCase();
-    }
-
-    if (key.length === 1) {
-        return key.toUpperCase();
-    }
+    if (/^F([1-9]|1[0-2])$/.test(key)) return key.toUpperCase();
+    if (key.length === 1) return key.toUpperCase();
 
     return key.toUpperCase();
 }
 
-/* =========================================================
-   ANULOWANIE WYBORU
-========================================================= */
+/* ANULOWANIE WYBORU */
 
 function cancelKeyCapture() {
     if (captureHandler) {
@@ -1289,9 +981,7 @@ function cancelKeyCapture() {
     captureUsedCombination = false;
 }
 
-/* =========================================================
-   CZYSZCZENIE
-========================================================= */
+/* CZYSZCZENIE */
 
 async function cleanupConnection() {
     keepReading = false;
@@ -1322,29 +1012,21 @@ async function cleanupConnection() {
     connectButton.classList.remove("connected");
 }
 
-/* =========================================================
-   ROZŁĄCZANIE
-========================================================= */
+/* ROZŁĄCZANIE */
 
 async function disconnectButtonBox() {
     await cleanupConnection();
-
     setStatus("niepołączono");
-
     configMessage.classList.remove("show");
 }
 
-/* =========================================================
-   OPÓŹNIENIE
-========================================================= */
+/* OPÓŹNIENIE */
 
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/* =========================================================
-   PRZYCISKI
-========================================================= */
+/* PRZYCISKI */
 
 connectButton.addEventListener("click", connectButtonBox);
 saveButton.addEventListener("click", saveSettings);
@@ -1356,26 +1038,18 @@ document.querySelectorAll(".capture").forEach(button => {
     });
 });
 
-/* =========================================================
-   ODŁĄCZENIE USB
-========================================================= */
+/* ODŁĄCZENIE USB */
 
 if ("serial" in navigator) {
     navigator.serial.addEventListener("disconnect", async function(event) {
         if (port && event.target === port) {
             await cleanupConnection();
-
-            setStatus(
-                "Button Box odłączony",
-                "error"
-            );
+            setStatus("Button Box odłączony", "error");
         }
     });
 }
 
-/* =========================================================
-   START
-========================================================= */
+/* START */
 
 setConfigurationMode(false);
 setStatus("niepołączono");
